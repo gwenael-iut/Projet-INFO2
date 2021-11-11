@@ -1,4 +1,4 @@
-#Commande d’un robot mobile Khepera - M. Kam
+# Commande d’un robot mobile Khepera - M. Kam
 
 ## Description
 <p>L'objectif de ce projet pour le semestre 3 est de comprendre le fonctionnement du Robot Khepera. Il faudra ensuite réaliser un manuel d'utilisation ainsi que des programmes de tests de chacun des capteurs et actionneurs présents sur ce dernier.</p>
@@ -6,16 +6,22 @@
 <p>Nous utiliserons le langage C lors de ce projet.</p>
 
 ## Les Membres
-BASCOUR Gwenaël
-CAUSSE Jade
-DA COSTA Yacine
-NAYET Morgan
-PARES Lucien
+<ul>
+   <li>BASCOUR Gwenaël</li>
+   <li>CAUSSE Jade</li>
+   <li>DA COSTA Yacine
+   <li>NAYET Morgan
+   <li>PARES Lucien</li>
+</ul>
 
 # Répartition des rôles
-Product Owner : NAYET Morgan
-Scrum Master : BASCOUR Gwenaël
+<ul>
+   <li>Product Owner : NAYET Morgan</li>
+   <li>Scrum Master : BASCOUR Gwenaël</li>
+</ul>
 
 # Les liens
-Borad ZenHub : <a href="https://tinyurl.com/ZenHub">Lien</a>
-Google Drive : <a href="https://drive.google.com/drive/folders/11GiqjCzcSF7EM9phpj5M1JvonLpbCXE9?usp=sharing">Lien</a>
+<ul>
+   <li>Borad ZenHub : <a href="https://tinyurl.com/ZenHub">Lien</a></li>
+   <li>Google Drive : <a href="https://drive.google.com/drive/folders/11GiqjCzcSF7EM9phpj5M1JvonLpbCXE9?usp=sharing">Lien</a></li>
+</ul>
