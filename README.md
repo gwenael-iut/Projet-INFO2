@@ -22,6 +22,6 @@
 
 # Les liens
 <ul>
-   <li>Borad ZenHub : <a href="https://tinyurl.com/ZenHub">Lien</a></li>
+   <li>Board ZenHub : <a href="https://tinyurl.com/ZenHub">Lien</a></li>
    <li>Google Drive : <a href="https://drive.google.com/drive/folders/11GiqjCzcSF7EM9phpj5M1JvonLpbCXE9?usp=sharing">Lien</a></li>
 </ul>
