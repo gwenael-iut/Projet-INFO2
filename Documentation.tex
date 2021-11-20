@@ -1,0 +1,46 @@
+\documentclass[english, 12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper]{geometry}
+\usepackage{babel}
+\usepackage{listings}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=false,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+}
+\author{BASCOUR Gwenaël - CAUSSE Jade -  DA COSTA Yacine\\PARES Lucien - NAYET Morgan}
+\title{Robot Khepera \\ Guide d'utilisation des actionneurs et capteurs}
+
+\begin{document}
+	\maketitle
+	\pagebreak
+	\tableofcontents
+	\pagebreak
+	\section{Généralités}
+		Cette section est consacrée aux généralités concernant la programmation de comportements du robot.
+		\subsection{Modèle de programme}
+			Tous les comportements programmées sont basés sur le modèle fourni pour le robot Khepera. Le modèle s'appelle \textit{template.c} et est trouvable sur la VM fournie.
+		\subsection{Compilation des programmes}
+			Tous les programmes sont compilés en suivant la méthode expliquée sur le manuel d'utilisation du robot Khepera.
+		\subsection{Fonctions Générales}
+			Cette section est dédiée aux fonctions non-spécifiques a un fonctionnement particulier du robot, mais qui sont tout de même utilisées lors de la programmation de comportements pour celui-ci.
+			\subsubsection{Changer le mode du terminal}
+				Syntaxe : kb\_change\_term\_mode(int mode);
+				\\
+				Cette méthode sert a changer le mode du terminal, afin que la fonction kb\_kbhit() puisse fonctionner, ou que getChar() renvoie instantanement un caractère, sans attendre que l'utilisateur appuie sur Entrée.
+				Dans cette fonction, l'argument \textit{mode} est a mettre a 0 pour avoir un terminal classique, ou a 1 pour avoir un terminal ou les fonctions nommée précédement fonctionnent.
+			\subsubsection{Savoir si une touche est enfoncée}
+			Syntaxe : kb\_kbhit();
+			\\
+			Cette méthode renvoie true si une touche est enfoncée, false sinon.
+	\section{Roues (Wheels)}
+		Cette section est dédiée au contrôle des déplacements du robot, grâce au controles des roues et moteurs associés.
+		\subsection{Fonctions Utilisées}
+			\subsubsection{Choix du mode de contrôle}
+			Syntaxe : 
+		
+		
+\end{document}
