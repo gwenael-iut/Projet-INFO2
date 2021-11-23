@@ -27,7 +27,6 @@ int main(int argc, char *argv[])
     }
 
     /* Choix des capteurs à activer */
-    kb_clrscr();
     printf("--------------------------- \
            \nTEST CAPTEURS A ULTRASONS \
            \n---------------------------\
@@ -40,7 +39,7 @@ int main(int argc, char *argv[])
            \n31 : Tous\
            \n\nAdditionner les valeurs pour activer plusieurs capteurs specifiques\
            \nExemple : activer Gauche et Avant, 1+4, saisir 5\
-           \n\nSi aucune valeur saisir : Tous actives par defaut\n\n");
+           \n\nSi aucune valeur saisie : Tous actifs par defaut\n\n");
 
     printf("Choix : ");
     if (fgets(line, 80, stdin) != NULL && line[0] != '\n') { 
@@ -79,7 +78,7 @@ int main(int argc, char *argv[])
         printf("\nAffichage des distance (cm)\
                 \n\nCapteur Gauche       : %4d cm\
                 \nCapteur Avant-Gauche : %4d cm\
-	              \nCapteur Avant        : %4d cm\
+	        \nCapteur Avant        : %4d cm\
                 \nCapteur Avant-Droit  : %4d cm\
                 \nCapteur Droit        : %4d cm\n",
                 us_values[0], us_values[1], us_values[2], us_values[3], us_values[4]);
