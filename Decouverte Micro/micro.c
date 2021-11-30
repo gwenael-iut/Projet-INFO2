@@ -37,11 +37,19 @@ int init()
 
 void end()
 {
-	
+    // Arret des hauts-paleurs
+	switch_speakers_ON_OFF(0);
+    mute_speaker(1);
+
+    kb_sound_release();
+
+    // Réactiver les capteurs a ultrason
+    kh4_activate_us(31, dsPic);
 }
 
 int main()
 {
+    char FILENAME[] = "enregistrement.wav";
     char line[80]; // Enregistrement du choix
     char sound[NB_SAMPLES]; // Enregistrement du son 
     
@@ -74,11 +82,11 @@ int main()
         return -1;
     }
 
-    printf("\n Enregistrement de %ds of sound -- appuyer sur ENTREE pour commencer\n", LONGUEUR);
+    printf("\n Enregistrement de %ds -- appuyer sur ENTREE pour commencer\n", LONGUEUR);
     // Sauvegarde du choix
     fgets(line, 80, stdin);
 
-    // Mise hors tension des hauts-parleurs
+    // Extinction des hauts-parleurs
     mute_speaker(1);
     switch_speakers_ON_OFF(0);
 
@@ -86,5 +94,27 @@ int main()
     printf("Début de l'enregistement: \n");
     record_buffer(sound, NB_SAMPLES);
 
+    // Extinction des microphones 
+    set_microphones_volume(0, 0);
+    // et allumage des hauts-parleurs
+    switch_speakers_ON_OFF(1);
+    mute_speaker(0);
 
+    // Volume des hauts parleurs(g, d)
+    set_microphones_volume(80, 80);
+
+    usleep(1000000); // Attendre 1 seconde
+    printf("\n Ecoute du son enregistré \n");
+    play_buffer(sound, NB_SAMPLES);
+
+    // Attendre la fin
+    wait_end_of_play();
+
+    // Sauvegarde dans un fichier
+    printf("Sauvegarde dans un fichier : %s\n", FILENAME);
+    save_wav_file(FILENAME, sound, NB_SAMPLES, STEREO, SAMPLE_SIZE, FREQUENCE_ENCHANTILLONNAGE);
+
+    end();
+    
+    return 0;
 }
