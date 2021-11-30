@@ -1,2 +1,2 @@
 #Ignorer l'archive créée par LaTeX
-.synctex.gz
+*.synctex.gz
