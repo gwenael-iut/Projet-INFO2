@@ -30,7 +30,7 @@
 			\subsubsection{Changer le mode du terminal}
 				Syntaxe : kb\_change\_term\_mode(int mode);
 				\\
-				Cette méthode sert a changer le mode du terminal, afin que la fonction kb\_kbhit() puisse fonctionner, ou que getChar() renvoie instantanement un caractère, sans attendre que l'utilisateur appuie sur Entrée.
+				Cette méthode sert a changer le mode du terminal afin que getChar() renvoie instantanement un caractère, sans attendre que l'utilisateur appuie sur Entrée.
 				Dans cette fonction, l'argument \textit{mode} est a mettre a 0 pour avoir un terminal classique, ou a 1 pour avoir un terminal ou les fonctions nommée précédement fonctionnent.
 			\subsubsection{Savoir si une touche est enfoncée}
 			Syntaxe : kb\_kbhit();
