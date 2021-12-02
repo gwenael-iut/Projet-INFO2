@@ -59,6 +59,10 @@ int main()
 
 	while (!sortieBoucle)
 	{	
+		printf("\nDistance parcourue : %d mm\n", distance);
+		vitesseMMS = vitessePulse * RATIO;
+		distance += vitesseMMS;
+		
 		if (kb_kbhit()) // Fonction permettant de savoir si une touche est actuellement enfoncée
 		{
 			toucheEnfoncee = getchar();
@@ -98,10 +102,7 @@ int main()
 				vitessePulse += INCREMENT_P;
 				if (vitessePulse > 1200)
 					vitessePulse = 1200;
-				vitesseMMS = vitessePulse * RATIO;
-				distance += vitesseMMS;
-				/* printf("Vitesse actuelle : %d (%d mm/s)\n", vitessePulse, vitesseMMS); */
-				printf("Distance parcourue : %d mm\n", distance);
+				/* vitesseMMS = vitessePulse * RATIO; */
 				toucheEnfoncee = prec;
 				goto aSpeed;
 				break;
@@ -110,10 +111,7 @@ int main()
 				vitessePulse -= INCREMENT_P;
 				if (vitessePulse < 5)
 					vitessePulse = 5;
-				vitesseMMS = vitessePulse * RATIO;
-				distance += vitesseMMS;
-				/* printf("Vitesse actuelle : %d (%d mm/s)\n", vitessePulse, vitesseMMS); */
-				printf("Distance parcourue : %d mm\n", distance);
+				/* vitesseMMS = vitessePulse * RATIO; */
 				toucheEnfoncee = prec;
 				goto aSpeed;
 				break;
@@ -122,10 +120,7 @@ int main()
 				vitessePulse += INCREMENT_G;
 				if (vitessePulse > 1200)
 					vitessePulse = 1200;
-				vitesseMMS = vitessePulse * RATIO;
-				distance += vitesseMMS;
-				/* printf("Vitesse actuelle : %d (%d mm/s)\n", vitessePulse, vitesseMMS); */
-				printf("Distance parcourue : %d mm\n", distance);				
+				/* vitesseMMS = vitessePulse * RATIO; */
 				toucheEnfoncee = prec;
 				goto aSpeed;
 				break;
@@ -134,10 +129,7 @@ int main()
 				vitessePulse -= INCREMENT_G;
 				if (vitessePulse < 5)
 					vitessePulse = 5;
-				vitesseMMS = vitessePulse * RATIO;
-				distance += vitesseMMS;
-				/* printf("Vitesse actuelle : %d (%d mm/s)\n", vitessePulse, vitesseMMS); */
-				printf("Distance parcourue : %d mm\n", distance);
+				/* vitesseMMS = vitessePulse * RATIO; */
 				toucheEnfoncee = prec;
 				goto aSpeed;
 				break;
