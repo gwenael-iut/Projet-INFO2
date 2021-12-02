@@ -10,25 +10,24 @@
 #define SIZE 80 // nombre de caractères lus
 #define VOL_BASIQUE 80 // volume par défaut des microphones et haut-parleurs
 
-static knet_dev_t *dsPic; // robot pic microcontroller access
-
+static knet_dev_t *dsPic; // Accès au microcontrôleur pic du robot
 int init()
 {
 	printf("\nKhepera 4 - testkh4\n");
 
-	// initiate libkhepera and robot access
+	// Initialisation de la librairie libkhepera et de l'accès au robot
 	if (kh4_init(0, NULL) != 0)
 	{
 		printf("\nERROR: could not initiate the libkhepera!\n\n");
 		return -1;
 	}
 
-	/* open robot socket and store the handle in its pointer */
+	/* Initialisation de la connection au robot */
 	dsPic = knet_open("Khepera4:dsPic", KNET_BUS_I2C, 0, NULL);
 
 	if (dsPic == NULL)
 	{
-		printf("\nERROR: could not initiate communication with Kh4 dsPic\n\n");
+		printf("\nErreur: impossible d'initialiser la connection avec le robot à l'aide de Kh4 dsPic\n\n");
 		return -2;
 	}
 
@@ -38,7 +37,7 @@ int init()
 void end()
 {
     // Arret des hauts-paleurs
-	switch_speakers_ON_OFF(0);
+    switch_speakers_ON_OFF(0);
     mute_speaker(1);
 
     kb_sound_release();
@@ -54,7 +53,7 @@ int main()
     
     int errInit, 
         errConfig,
-        longueur; // durée de l'enregistrement
+        longueur; // Durée de l'enregistrement
 
     unsigned int volMicG, 
                  volMicD,
