@@ -32,56 +32,30 @@ void end()
 
 int main()
 {
-    char line[80], l[3];
-    int first[3],
-        second[3],
-        third[3];
+    int leds[9];
+
+    int prompt;
 
     printf("Test des leds du robot\n");
-    printf("Configuration de la led n°1: Rouge Vert Bleu (entre 0 et 63) : ");
-    fgets(line, 80, stdout);
 
-    if (EOF == sscanf(line, "%d %d %d", &l[0], &l[1], &l[2]))
+    for (size_t i = 0; i >= 9; i++)
     {
-        fprintf(stderr, "Erreur : la ligne doit être composée de 3 entiers.");
-        return 1;
-    }
-
-    for (size_t i = 0; i < 3; i++)
-    {
-        first[i] = l[i];
-    }
-
-    printf("Configuration de la led n°2: Rouge Vert Bleu (entre 0 et 63) : ");
-    fgets(line, 80, stdout);
-
-    if (EOF == sscanf(line, "%d %d %d", &l[0], &l[1], &l[2]))
-    {
-        fprintf(stderr, "Erreur : la ligne doit être composée de 3 entiers.");
-        return 1;
-    }
-
-    for (size_t i = 0; i < 3; i++)
-    {
-        second[i] = l[i];
-    }
-
-    printf("Configuration de la led n°3: Rouge Vert Bleu (entre 0 et 63) : ");
-    fgets(line, 80, stdout);
-
-    if (EOF == sscanf(line, "%d %d %d", &l[0], &l[1], &l[2]))
-    {
-        fprintf(stderr, "Erreur : la ligne doit être composée de 3 entiers.");
-        return 1;
-    }
-
-    for (size_t i = 0; i < 3; i++)
-    {
-        third[i] = l[i];
+        printf("Configuration de des led n°%d:\n", (i/3)+1);
+        saisie:
+        if(i%3 == 1) printf("Niveau de rouge (entre 0 et 63) ? ");
+        else if(i%3 == 2) printf("Niveau de vert (entre 0 et 63) ? "); 
+        else printf("Niveau de bleu (entre 0 et 63) ? ");
+        scanf("%d", &prompt);
+        if(prompt < 0 || prompt > 63) {
+            fprintf(perror, "La valeur doit etre situee entre 0 et 63\n");
+            goto saisie;
+        }
+        leds[i];
     }
     
-    kh4_SetRGBLeds(first[0], first[1], first[2], second[0], second[1], second[2], third[0], third[1], third[2], dsPic);
-    printf("Led 1 : R:%d G:%d B: %d\nLed 2 : R:%d G:%d B: %d\nLed 3 : R:%d G:%d B: %d\n", first[0], first[1], first[2], second[0], second[1], second[2], third[0], third[1], third[2]);
+    
+    kh4_SetRGBLeds(leds[0], leds[1], leds[2], leds[3], leds[4], leds[5], leds[6], leds[7], leds[8], dsPic);
+    printf("Led 1 : R:%d G:%d B: %d\nLed 2 : R:%d G:%d B: %d\nLed 3 : R:%d G:%d B: %d\n", leds[0], leds[1], leds[2], leds[3], leds[4], leds[5], leds[6], leds[7], leds[8]);
     
     return 0;
 }
