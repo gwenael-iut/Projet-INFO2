@@ -27,35 +27,35 @@ int init()
 
 void end()
 {
-    kh4_setRGBLeds(0, 0, 0, 0, 0, 0, 0, 0, 0);
+    tcflush(0, 0);
+    fflush(stdin);
+    kh4_SetRGBLeds(0, 0, 0, 0, 0, 0, 0, 0, 0, dsPic);
 }
 
 int main()
 {
-    int leds[9];
+    init();
 
-    int prompt;
+    char leds[9];
+    char prompt[80];
 
     printf("Test des leds du robot\n");
 
-    for (size_t i = 0; i >= 9; i++)
+    printf("Entrez les valeurs RGB des trois leds a la suite \n (Ex : 120 0 0 0 122 0 0 0 120) \n");
+    tcflush(0, 0);
+    fflush(stdin);
+    fgets(prompt, 80, stdin);
+    
+    if (EOF == sscanf(prompt, "%d %d %d %d %d %d %d %d %d", &leds[0], &leds[1], &leds[2], &leds[3], &leds[4], &leds[5], &leds[6], &leds[7], &leds[8]))
+        printf("\nErreur : Syntaxe : R1 G1 B1 R2 G2 B2 R3 G3 B3\n");
+    else
     {
-        printf("Configuration de des led n°%d:\n", (i/3)+1);
-        saisie:
-        if(i%3 == 1) printf("Niveau de rouge (entre 0 et 63) ? ");
-        else if(i%3 == 2) printf("Niveau de vert (entre 0 et 63) ? "); 
-        else printf("Niveau de bleu (entre 0 et 63) ? ");
-        scanf("%d", &prompt);
-        if(prompt < 0 || prompt > 63) {
-            fprintf(perror, "La valeur doit etre situee entre 0 et 63\n");
-            goto saisie;
-        }
-        leds[i];
+        kh4_SetRGBLeds(leds[0], leds[1], leds[2], leds[3], leds[4], leds[5], leds[6], leds[7], leds[8], dsPic);
+        printf("RGB : \n\t - LED 1 : %d %d %d \n\t - LED 2 : %d %d %d \n\t - LED 3 : %d %d %d\n", leds[0], leds[1], leds[2], leds[3], leds[4], leds[5], leds[6], leds[7], leds[8]);
+        usleep(5000000);
     }
-    
-    
-    kh4_SetRGBLeds(leds[0], leds[1], leds[2], leds[3], leds[4], leds[5], leds[6], leds[7], leds[8], dsPic);
-    printf("Led 1 : R:%d G:%d B: %d\nLed 2 : R:%d G:%d B: %d\nLed 3 : R:%d G:%d B: %d\n", leds[0], leds[1], leds[2], leds[3], leds[4], leds[5], leds[6], leds[7], leds[8]);
-    
+
+    end();
+
     return 0;
 }
