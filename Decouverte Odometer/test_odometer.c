@@ -61,7 +61,6 @@ int main()
 	{	
 		printf("\nDistance parcourue : %d mm\n", distance);
 		vitesseMMS = vitessePulse * RATIO;
-		distance += vitesseMMS;
 		
 		if (kb_kbhit()) // Fonction permettant de savoir si une touche est actuellement enfoncée
 		{
@@ -137,6 +136,12 @@ int main()
 			default:
 				break;
 			}
+		}
+		
+		if (prec == 'z' || prec == 's')
+		{
+			usleep(100000);
+			distance += vitesseMMS;
 		}
 	}
 
