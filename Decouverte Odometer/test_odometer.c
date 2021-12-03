@@ -1,6 +1,6 @@
 #include <khepera/khepera.h>
 
-#define RATIO 0.678181
+#define RATIO 0.0678181
 #define INCREMENT_P 25
 #define INCREMENT_G 100
 
@@ -59,6 +59,7 @@ int main()
 
 	while (!sortieBoucle)
 	{	
+		kb_clrscr();
 		printf("\nDistance parcourue : %d mm\n", distance);
 		vitesseMMS = vitessePulse * RATIO;
 		
