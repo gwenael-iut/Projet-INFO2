@@ -9,7 +9,7 @@
 /* ------------------------------------------------ */
 #include <khepera/khepera.h>
 
-#define RATIO 0.678181  // Conversion des unités de vitesse en mm/s
+#define RATIO 0.0678181  // Conversion des unités de vitesse en mm/s
 #define INCREMENT_P 25   // Petit incrément des unités de vitesse
 #define INCREMENT_G 100  // Grand incrément des unités de vitesse
 
