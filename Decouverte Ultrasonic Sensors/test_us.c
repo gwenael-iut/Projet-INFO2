@@ -2,28 +2,51 @@
 /* -------          PROGRAMME TEST          ------- */
 /* -------       CAPTEURS À ULTRASONS       ------- */
 /* ------------------------------------------------ */
+/* ------- Fichier : test_us.c              ------- */
+/* ------- Auteur  : BASCOUR Gwenaël        ------- */
+/* ------------------------------------------------ */
 #include <khepera/khepera.h>
-#include <signal.h>
 
-static knet_dev_t * dsPic;
+static knet_dev_t * dsPic; // Accès au microcontrôleur Pic du robot
 
-int main(int argc, char *argv[]) 
+/*
+ * Méthode permettant l'initialisation du robot
+ * Librairie Khepera & connexion au robot
+ */
+int init()
 {
-    char Buffer[100];
-    int i, rc;
-    char line[80], us_activation_value; 
-    short us_values[5];
-
-    /* Initialisation de la librairie khepera et la connexion au robot */
-    if ((rc = kb_init(argc , argv)) < 0 ) {
+    /* Initialisation de la librairie khepera */
+    if ((kb_init(0 , NULL)) < 0 ) {
         printf("\nERREUR: Echec de l'initialisation de la librairie !\n\n");
         return 1;
     }
 
-    dsPic  = knet_open( "Khepera4:dsPic" , KNET_BUS_I2C , 0 , NULL );
+    /* Initialisation de la connexion au robot */
+    dsPic  = knet_open("Khepera4:dsPic", KNET_BUS_I2C, 0, NULL );
     if (dsPic == NULL) {
         printf("\nERREUR: Echec de la communication avec le robot (Kh4 dsPic)\n\n");
-        return -2;
+        return 1;
+    }
+
+    return 0;
+}
+
+/*
+ * Fonction permettant le test des capteurs à ultrasons du robot.
+ * Demande des capteurs à activer et affichage sur la sortie
+ * standard des valeurs retournées.
+ */
+int main() 
+{
+    int i;
+    short us_values[5];
+    char Buffer[100],
+         line[80], 
+         us_activation_value;
+
+    /* Initialisation du robot */
+    if (init() != 0) {
+        return 1;
     }
 
     /* Choix des capteurs à activer */
@@ -64,8 +87,8 @@ int main(int argc, char *argv[])
               \n- Distance max : 250.0 cm\
               \n- Distance min :  25.0 cm\
               \n- Distance = 2000 si capteur desactive\
-              \n- Distance = 0 si objet a moins de 25 cm\
-              \n- Distance = 1000 si aucune detection\
+              \n- Distance = 1000 si objet a moins de 25 cm ou aucune detection\
+              \n\n- Marge d'erreur : +/- 2cm\
               \n\n---------------------------\n\n");
 
         /* Mesure des distances et stockage dans le tampon */
@@ -78,7 +101,7 @@ int main(int argc, char *argv[])
         printf("\nAffichage des distance (cm)\
                 \n\nCapteur Gauche       : %4d cm\
                 \nCapteur Avant-Gauche : %4d cm\
-	        \nCapteur Avant        : %4d cm\
+                \nCapteur Avant        : %4d cm\
                 \nCapteur Avant-Droit  : %4d cm\
                 \nCapteur Droit        : %4d cm\n",
                 us_values[0], us_values[1], us_values[2], us_values[3], us_values[4]);

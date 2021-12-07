@@ -1,16 +1,14 @@
 /* ------------------------------------------------ */
 /* -------          PROGRAMME TEST          ------- */
-/* -------           DU GYROSCOPE           ------- */
+/* -------        DE L'ACCELEROMETRE        ------- */
 /* ------------------------------------------------ */
-/* ------- Fichier : test_gyroscope.c       ------- */
+/* ------- Fichier : test_accelerometer.c   ------- */
 /* -------                                  ------- */
 /* ------- Auteur  : BASCOUR Gwenaël        ------- */
-/* ------- Auteur  : CAUSSE Jade            ------- */
 /* ------- Auteur  : DA COSTA Yacine        ------- */
+/* ------- Auteur  : NAYET Morgan           ------- */
 /* ------------------------------------------------ */
 #include <khepera/khepera.h>
-
-#define TAILLE 100
 
 static knet_dev_t * dsPic; // Accès au microcontrôleur Pic du robot
 
@@ -37,31 +35,31 @@ int init()
 }
 
 /*
- * Fonction permettant de tester le gyroscope du robot
+ * Fonction permettant de tester l'accelerometre du robot
  * 2 modes d'affichage possibles :
  *   - Uniquement les moyennes
  *   - Toutes les valeurs et leur moyenne
  * Affichage des données sur la sortie standard
  */
-int main()
+int main() 
 {
+    char Buffer[100],
+         toucheEnfoncee;
     int i = 0;
     double valCourante,
            valSuiv;
-    char toucheEnfoncee,
-         buffer[TAILLE];
 
     /* Initialisation du robot */
     if (init() != 0) {
         return 1;
     }
 
-    printf("------------------- \
-           \nTEST DU GYROSCOPE \
-           \n-------------------\n\n");
+    printf("------------------ \
+           \nTEST ACCELEROMETRE \
+           \n------------------\n\n");
     printf("Quel mode souhaitez-vous choisir ?\n");
-    printf("a -> Afficher la moyenne des valeurs du gyroscope\n");
-    printf("b -> Afficher les 10 valeurs recuperees par le gyroscope et leur moyenne\n\n");
+    printf("a -> Afficher la moyenne des valeurs de l'accelerometre\n");
+    printf("b -> Afficher les 10 valeurs recuperees par l'accelerometre et leur moyenne\n\n");
 
     /* Demande du mode d'affichage des données */
     printf("Choix : ");
@@ -74,30 +72,30 @@ int main()
             usleep(200000);
             kb_clrscr();
 
-            printf("------------------- \
-                   \nTEST DU GYROSCOPE \
-                   \n-------------------\n\n");
+            printf("------------------ \
+                   \nTEST ACCELEROMETRE \
+                   \n------------------\n\n");
 			
-            // Récupération des valeurs pour chaque axe X Y Z dans un tableau
-            kh4_measure_gyro(buffer, dsPic);
+            // Récupération des valeurs et stockage dans le tampon
+            kh4_measure_acc(Buffer, dsPic);
 			
             // Remise à zéro de la valeur courante pour X
             valCourante = 0;
-            for (i = 0; i < 10; i++) valCourante += ((short)((buffer[i * 2] | buffer[i * 2 + 1] << 8))) * KH4_GYRO_DEG_S;
+            for (i = 0; i < 10; i++) valCourante += ((short)(Buffer[i*2] | Buffer[i*2+1] << 8) >> 4) / 1000.0;
             printf("Moyenne des 10 valeurs de X :\n ");
-            printf("%6.1f\n\n", valCourante / 10.0);
+            printf("%6.2f\n\n", valCourante / 10.0);
 
             // Remise à zéro de la valeur courante pour Y
             valCourante = 0;
-            for (i = 10; i < 20; i++) valCourante += ((short)((buffer[i * 2] | buffer[i * 2 + 1] << 8))) * KH4_GYRO_DEG_S;
+            for (i = 10; i < 20; i++) valCourante += ((short)(Buffer[i*2] | Buffer[i*2+1] << 8) >> 4) / 1000.0;
             printf("Moyenne des 10 valeurs de Y :\n ");
-            printf("%6.1f\n\n", valCourante / 10.0);
+            printf("%6.2f\n\n", valCourante / 10.0);
 
             // Remise à zéro de la valeur courante pour Z
             valCourante = 0;
-            for (i = 20; i < 30; i++) valCourante += ((short)((buffer[i * 2] | buffer[i * 2 + 1] << 8))) * KH4_GYRO_DEG_S;
+            for (i = 20; i < 30; i++) valCourante += ((short)(Buffer[i*2] | Buffer[i*2+1] << 8) >> 4) / 1000.0;
             printf("Moyenne des 10 valeurs de Z :\n ");
-            printf("%6.1f\n\n", valCourante / 10.0);
+            printf("%6.2f\n\n", valCourante / 10.0);
 
             printf("\nAppuyez sur une touche pour stopper le programme.\n");
         }
@@ -107,56 +105,56 @@ int main()
         while (!kb_kbhit()) {
             kb_clrscr();
 
-            printf("------------------- \
-                   \nTEST DU GYROSCOPE \
-                   \n-------------------\n\n");
+            printf("------------------ \
+                   \nTEST ACCELEROMETRE \
+                   \n------------------\n\n");
 
-            // Récupération des valeurs pour chaque axe X Y Z dans un tableau
-            kh4_measure_gyro(buffer, dsPic);
+            // Récupération des valeurs et stockage dans le tampon
+            kh4_measure_acc(Buffer, dsPic);
 
-            // Affichage des 10 valeurs récupérées par le gyroscope et de la moyenne pour l'axe X
-            printf("Valeurs de X [deg/s] :\n");
+            // Affichage des 10 valeurs récupérées par l'accelerometre et de la moyenne pour l'axe X
+            printf("Valeurs de X [g] :\n");
             valCourante = 0;
 
             // Les valeurs pour l'axe X sont stockées de l'indice 0 à l'indice 9 du buffer
             for (i = 0; i < 10; i++) {
-                // Décalage binaire puis conversion en deg/s
-                valSuiv = ((short)((buffer[i * 2] | buffer[i * 2 + 1] << 8))) * KH4_GYRO_DEG_S;
-                printf("%6.1f\n", valSuiv);
+                // Décalage binaire puis conversion en G
+                valSuiv = ((short)(Buffer[i*2] | Buffer[i*2+1] << 8) >> 4) / 1000.0;
+                printf("%6.2f\n", valSuiv);
                 valCourante += valSuiv;
             }
             printf("Moyenne des 10 valeurs de X :\n");
-            printf("%6.1f\n\n", valCourante / 10.0);
+            printf("%6.2f\n\n", valCourante / 10.0);
 
 
-            // Affichage des 10 valeurs récupérées par le gyroscope et de la moyenne pour l'axe Y
-            printf("Valeurs de Y [deg/s] :\n");
+            // Affichage des 10 valeurs récupérées par l'accelerometre et de la moyenne pour l'axe Y
+            printf("Valeurs de Y [g] :\n");
             valCourante = 0;
 
             // Les valeurs pour l'axe Y sont stockées de l'indice 10 à l'indice 19 du buffer
             for (i = 10; i < 20; i++) {
-                // Décalage binaire puis conversion en deg/s
-                valSuiv = ((short)((buffer[i * 2] | buffer[i * 2 + 1] << 8))) * KH4_GYRO_DEG_S;
-                printf("%6.1f\n", valSuiv);
+                // Décalage binaire puis conversion en G
+                valSuiv = ((short)(Buffer[i*2] | Buffer[i*2+1] << 8) >> 4) / 1000.0;
+                printf("%6.2f\n", valSuiv);
                 valCourante += valSuiv;
             }
             printf("Moyenne des 10 valeurs de Y :\n");
-            printf("%6.1f\n\n", valCourante / 10.0);
+            printf("%6.2f\n\n", valCourante / 10.0);
 
 
-            // Affichage des 10 valeurs récupérées par le gyroscope et de la moyenne pour l'axe Z
-            printf("Valeurs de Z [deg/s] :\n ");
+            // Affichage des 10 valeurs récupérées par l'accelerometre et de la moyenne pour l'axe Z
+            printf("Valeurs de Z [g] :\n");
             valCourante = 0;
 
             // Les valeurs pour l'axe Z sont stockées de l'indice 20 à l'indice 29 du buffer
             for (i = 20; i < 30; i++) {
-                // Décalage binaire puis conversion en deg/s
-                valSuiv = ((short)((buffer[i * 2] | buffer[i * 2 + 1] << 8))) * KH4_GYRO_DEG_S;
-                printf("%6.1f\n", valSuiv);
+                // Décalage binaire puis conversion en G
+                valSuiv = ((short)(Buffer[i*2] | Buffer[i*2+1] << 8) >> 4) / 1000.0;
+                printf("%6.2f\n", valSuiv);
                 valCourante += valSuiv;
             }
-            printf("Moyenne des 10 valeurs de Z :\n ");
-            printf("%6.1f\n\n", valCourante / 10.0);
+            printf("Moyenne des 10 valeurs de Z :\n");
+            printf("%6.2f\n\n", valCourante / 10.0);
 
             printf("\nAppuyez sur une touche pour stopper le programme.\n");
             usleep(1000000); // Attente de 1s avant de réactualiser les valeurs

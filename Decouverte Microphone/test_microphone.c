@@ -1,39 +1,50 @@
+/* ----------------------------------------------- */
+/* -------        PROGRAMME DE TEST        ------- */
+/* -------            MICROPHONE           ------- */
+/* ----------------------------------------------- */
+/* ------- Fichier : test_microphone.c      ------ */
+/* -------                                  ------ */
+/* ------- Auteur  : CAUSSE Jade            ------ */
+/* ------- Auteur  : DA COSTA Yacine        ------ */
+/* ----------------------------------------------- */
 #include <khepera/khepera.h>
-#include <stdio.h>
-#include <string.h>
 
 #define FREQUENCE_ENCHANTILLONNAGE 22050 // Hz
-#define SAMPLE_SIZE 16 // Bits du sample
-#define STEREO 2 // Mode stereo
-#define ENDIAN 0 // 0 pour little-endian, 1 pour big-endian
-#define SIGNED 1 // 0 pour non-signé, 1 pour signé
-#define SIZE 80 // nombre de caractères lus
-#define VOL_BASIQUE 80 // volume par défaut des microphones et haut-parleurs
+#define SAMPLE_SIZE 16                   // Bits du sample
+#define STEREO 2                         // Mode stereo
+#define ENDIAN 0                         // 0 pour little-endian, 1 pour big-endian
+#define SIGNED 1                         // 0 pour non-signé, 1 pour signé
+#define SIZE 80                          // Nombre de caractères lus
+#define VOL_BASIQUE 80                   // Volume par défaut des microphones et haut-parleurs
 
-static knet_dev_t *dsPic; // Accès au microcontrôleur pic du robot
+static knet_dev_t *dsPic;                // Accès au microcontrôleur Pic du robot
+
+/*
+ * Méthode permettant l'initialisation du robot
+ * Librairie Khepera & connexion au robot
+ */
 int init()
 {
-	printf("\nKhepera 4 - testkh4\n");
+    /* Initialisation de la librairie khepera */
+    if ((kb_init(0 , NULL)) < 0 ) {
+        printf("\nERREUR: Echec de l'initialisation de la librairie !\n\n");
+        return 1;
+    }
 
-	// Initialisation de la librairie libkhepera et de l'accès au robot
-	if (kh4_init(0, NULL) != 0)
-	{
-		printf("\nERROR: could not initiate the libkhepera!\n\n");
-		return -1;
-	}
+    /* Initialisation de la connexion au robot */
+    dsPic  = knet_open("Khepera4:dsPic", KNET_BUS_I2C, 0, NULL );
+    if (dsPic == NULL) {
+        printf("\nERREUR: Echec de la communication avec le robot (Kh4 dsPic)\n\n");
+        return 1;
+    }
 
-	/* Initialisation de la connection au robot */
-	dsPic = knet_open("Khepera4:dsPic", KNET_BUS_I2C, 0, NULL);
-
-	if (dsPic == NULL)
-	{
-		printf("\nErreur: impossible d'initialiser la connection avec le robot à l'aide de Kh4 dsPic\n\n");
-		return -2;
-	}
-
-	return 0;
+    return 0;
 }
 
+/*
+ * Méthode permettant de remettre le robot et son système
+ * de son dans son état initial.
+ */
 void end()
 {
     // Arret des hauts-paleurs
@@ -46,6 +57,13 @@ void end()
     kh4_activate_us(31, dsPic);
 }
 
+/*
+ * Fonction permettant le test des microphones du robot
+ * Demande le volume des micros et la durée de l'enregistrement.
+ * Enregistre le son et le rejoue afin de vérifier le bon fonctionnement
+ * de l'enregistrement.
+ * Demande un nom de fichier afin de sauvegarder l'audio dans un .wav
+ */
 int main()
 {
     char FILENAME[SIZE];
@@ -53,7 +71,7 @@ int main()
     
     int errInit, 
         errConfig,
-        longueur; // Durée de l'enregistrement
+        longueur; // durée de l'enregistrement
 
     unsigned int volMicG, 
                  volMicD,
@@ -62,7 +80,7 @@ int main()
 
     unsigned long nb_samples;
 
-	if ((errInit = init()) != 0)
+    if ((errInit = init()) != 0)
         return errInit;
 
     // Initialisation du son
@@ -76,6 +94,10 @@ int main()
     kh4_activate_us(0, dsPic);
     // Couper les hauts parleurs pour éviter l'effet larsen
     set_speakers_volume(0, 0);
+
+    printf("------------------ \
+           \nTEST MICROPHONES \
+           \n------------------\n\n");
 
     do {
         printf("Entrez le volume des microphones (entre 0 et 100, entrez 0 pour valeur par defaut) : \n");
@@ -102,7 +124,7 @@ int main()
     }
 
     do {
-        printf("Entrez une duree d'enregistrement : \n");
+        printf("\nEntrez une duree d'enregistrement (en sec) : ");
         scanf("%d", &longueur);
 
         if (longueur < 0) {
@@ -114,7 +136,8 @@ int main()
     char sound[nb_samples]; // Enregistrement du son 
 
     entree:
-    printf("\n Enregistrement de %ds -- entrez a pour ressaisir, autre chose pour continuer \n", longueur);
+    printf("\nEnregistrement de %ds -- Entrez 'a' pour ressaisir, autre chose pour lancer l'enregistrement \n", longueur);
+    printf("Saisie : ");
     // Sauvegarde du choix
     scanf("%s", line);
     if (line[0] == 'a') goto entree;
@@ -124,7 +147,7 @@ int main()
     switch_speakers_ON_OFF(0);
 
     // Début de l'enregistrement 
-    printf("Debut de l'enregistement: \n");
+    printf("\nDebut de l'enregistement: \n");
     record_buffer(sound, nb_samples);
 
     // Extinction des microphones 
@@ -134,7 +157,7 @@ int main()
     mute_speaker(0);
 
     do {
-        printf("Entrez le volume des haut-parleurs (entre 0 et 100, entrez 0 pour valeur par defaut) : \n");
+        printf("\nEntrez le volume des haut-parleurs (entre 0 et 100, entrez 0 pour valeur par defaut) : \n");
         printf("Haut-parleur gauche : ");
         scanf("%u", &volSpeakG);
         printf("Haut-parleur droit : ");
@@ -151,19 +174,20 @@ int main()
     set_speakers_volume(volSpeakG, volSpeakD);
 
     usleep(1000000); // Attendre 1 seconde
-    printf("\n Ecoute du son enregistre \n");
+    printf("\nEcoute du son enregistre \n");
     play_buffer(sound, nb_samples);
 
     // Attendre la fin de l'écoute
     wait_end_of_play();
 
     // Sauvegarde dans un fichier audio
-    printf("Choississez un nom de fichier (sans l'extension) pour le sauvegarder : \n");
+    printf("\nChoississez un nom de fichier (sans l'extension) pour le sauvegarder : \n");
     scanf("%s", FILENAME); // récupération du nom de fichier
     strcat(FILENAME, ".wav"); // concaténation pour ajouter l'extension audio
 
     save_wav_file(FILENAME, sound, nb_samples, STEREO, SAMPLE_SIZE, FREQUENCE_ENCHANTILLONNAGE);
 
+    // Remettre le robot dans son état initial
     end();
     
     return 0;
