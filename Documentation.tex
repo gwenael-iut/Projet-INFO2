@@ -1,46 +1,317 @@
-\documentclass[english, 12pt]{article}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{lmodern}
-\usepackage[a4paper]{geometry}
-\usepackage{babel}
-\usepackage{listings}
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+\usepackage[french]{babel}
+\usepackage{geometry} % to change the page dimensions
+\usepackage{blindtext}
 \usepackage{hyperref}
-\hypersetup{
-    colorlinks=false,
-    pdftitle={Overleaf Example},
-    pdfpagemode=FullScreen,
-}
-\author{BASCOUR Gwenaël - CAUSSE Jade -  DA COSTA Yacine\\PARES Lucien - NAYET Morgan}
-\title{Robot Khepera \\ Guide d'utilisation des actionneurs et capteurs}
+\geometry{a4paper}
+
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{float}
+%Path relative to the main .tex file 
+\graphicspath{ {./images/} }
+
+\title{\huge\bfseries Khepera IV \\ Manuel d'utilisation	}
+\author{BASCOUR Gwenaël - CAUSSE Jade - DA COSTA Yacine \\ NAYET Morgan - PARES Lucien}
+\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
 
 \begin{document}
-	\maketitle
-	\pagebreak
-	\tableofcontents
-	\pagebreak
-	\section{Généralités}
-		Cette section est consacrée aux généralités concernant la programmation de comportements du robot.
-		\subsection{Modèle de programme}
-			Tous les comportements programmées sont basés sur le modèle fourni pour le robot Khepera. Le modèle s'appelle \textit{template.c} et est trouvable sur la VM fournie.
-		\subsection{Compilation des programmes}
-			Tous les programmes sont compilés en suivant la méthode expliquée sur le manuel d'utilisation du robot Khepera.
-		\subsection{Fonctions Générales}
-			Cette section est dédiée aux fonctions non-spécifiques a un fonctionnement particulier du robot, mais qui sont tout de même utilisées lors de la programmation de comportements pour celui-ci.
-			\subsubsection{Changer le mode du terminal}
-				Syntaxe : kb\_change\_term\_mode(int mode);
-				\\
-				Cette méthode sert a changer le mode du terminal afin que getChar() renvoie instantanement un caractère, sans attendre que l'utilisateur appuie sur Entrée.
-				Dans cette fonction, l'argument \textit{mode} est a mettre a 0 pour avoir un terminal classique, ou a 1 pour avoir un terminal ou les fonctions nommée précédement fonctionnent.
-			\subsubsection{Savoir si une touche est enfoncée}
-			Syntaxe : kb\_kbhit();
-			\\
-			Cette méthode renvoie true si une touche est enfoncée, false sinon.
-	\section{Roues (Wheels)}
-		Cette section est dédiée au contrôle des déplacements du robot, grâce au controles des roues et moteurs associés.
-		\subsection{Fonctions Utilisées}
-			\subsubsection{Choix du mode de contrôle}
-			Syntaxe : 
-		
-		
+\begin{titlepage}
+	\centering
+	\vspace*{\fill}
+	
+	\vspace*{0.5cm}
+	
+	\huge\bfseries
+	Khepera IV \\ Manuel d'utilisation
+	
+	\vspace*{0.5cm}
+	
+	\large BASCOUR Gwenael -- CAUSSE Jade -- DA COSTA Yacine \\ NAYET Morgan -- PARES Lucien
+	
+	\vspace*{\fill}
+\end{titlepage}
+\pagebreak
+\tableofcontents
+\pagebreak
+\section{Description du robot}
+\subsection{Les actionneurs}
+\subsubsection{Roues}
+Le robot possède deux roues gérées par deux moteurs ayant pour fonction de le mouvoir selon quatre directions (avant, arrière, droite, gauche) et une vitesse choisie. La vitesse du robot peut être incrémentée de 17 mm/s ou 67,8 mm/s en une fois selon l’option choisie. De plus, la vitesse minimale est de 0 mm/s, c’est-à-dire à l’arrêt jusqu’à un maximum de 813,8172 mm/s. La valeur par défaut de la vitesse lors du lancement du programme est de 135,6362 mm/s. Ces actionneurs sont situés sous le robot aux extrémités gauche et droite.
+\subsubsection{Haut-parleurs}
+Le robot dispose de haut-parleurs permettant l’écoute de fichier audio au format .wav. Ces derniers peuvent être désactivés si souhaité et leur volume est réglable en pourcentage, allant de 0\% (cas dans lequel le haut-parleur est désactivé) jusqu’à 100\%. Le volume est défini par défaut à 80\%.
+\subsubsection{Leds}
+Le robot possède trois LEDs RGB positionnées sur le dessus de celui-ci. Elles sont entièrement contrôlables par le programmeur. Ces leds sont positionées sur les sommets d'un triangle isocèle, elles peuvent donc servir à localiser et identifier le robot à l'aide d'une caméra, ainsi que de savoir où est l'avant. 
+\begin{figure}[H]
+	\centering
+	\caption{Position des LEDs}
+	\includegraphics[scale=0.6]{positionLEDs}
+\end{figure}
+\subsection{Les capteurs}
+\subsubsection{Odomètre}
+Le robot est équipé d'un odomètre permettant de mesurer la distance parcourue par le robot.
+Ce capteur prend en compte les révolutions des deux roues du robot, information utilisée pour calculer la distance parcourue.
+\subsubsection{Gyroscope}
+Le robot est équipé d'un gyroscope qui sert à mesurer la vitesse angulaire sur 3 axes, en deg/s.
+\begin{figure}[H]
+	\centering
+	\caption{Axes de mesure du gyroscope (vus du dessus)}
+	\includegraphics[scale=0.6]{axesGyro}
+\end{figure}
+Le capteur mesure 10 valeurs par 10 valeurs, et ce toutes les 105ms.
+\subsubsection{Accéléromètre}
+Le robot est équipé d'un accéléromètre qui sert à mesurer l'accélération du robot sur 3 axes, en g.
+La valeur est positive sur l'axe X quand le robot avance, positive sur l'axe Y quand le robot va sur sa gauche, et négative sur l'axe Z avec la gravité.
+\begin{figure}[H]
+	\centering
+	\caption{Axes de mesure de l'accéléromètre (vus du dessus)}
+	\includegraphics[scale=0.6]{axesAccel}
+\end{figure}
+Le capteur mesure 10 valeurs par 10 valeurs, et ce toutes les 100ms.
+\subsubsection{Capteurs infrarouges -- Bottom}
+Il y a 4 capteurs infrarouges se situant sous le robot Khepera IV.\\
+Chacun d'eux est capable de mesurer les ondes lumineuses ambiantes.\\
+Les capteurs infrarouges pulsent des ondes lumineuses infrarouges et captent la réflexion de celles-ci sur l'objet se trouvant sous chaque capteur.\\
+\begin{figure}[H]
+	\centering
+	\caption{Position des capteurs infrarouges sous le robot}
+	\includegraphics[scale=0.4]{positionIR_Bot}
+\end{figure}
+\subsubsection{Capteurs infrarouges}
+Le robot possède 8 capteurs infrarouges situés tout autour de lui, chacun espacé de 45° (cf. Figure 5), lui permettant de détecter des obstacles ou alors de mesurer la luminosité ambiante. Il est capable de détecter des objets situés entre 2mm et 250mm en fonction de la luminosité du lieu et de la couleur de l’objet.\\
+Les valeurs renvoyées par les capteurs sont normalement comprises entre 0 et 1023. Plus la valeur est élevée plus un objet est proche du capteur. Si valeur s’approche de 0 alors aucun objet ne se trouve à proximité du robot.\\
+\begin{figure}[H]
+	\centering
+	\caption{Position des capteurs infrarouges sur les côtés du robot}
+	\includegraphics[scale=0.7]{positionIR_Front}
+\end{figure}
+\subsubsection{Microphone}
+Le robot possède des microphones ayant pour fonction d’enregistrer des sons durant une durée donnée. Le volume de ces microphones peut être choisi entre 0 et 100 ou simplement initialisé par défaut, c’est-à-dire à 80 sur 100. De plus, il est possible de sauvegarder le fichier créé au format .wav et de choisir son nom. 
+Ces deux microphones sont placés sous le robot, aux extrémités gauche et droite. \\
+\begin{figure}[H]
+	\centering
+	\caption{Position des microphones sur le robot}
+	\includegraphics[scale=0.7]{positionMicros}
+\end{figure}
+\subsubsection{Capteurs à ultrasons}
+Le robot possède 5 capteurs à ultrasons, chacun espacé de 45° (cf. Figure 7), lui permettant de mesurer la distance qui le sépare d’un objet (ex : mobilier, mur). \\
+Les capteurs à ultrasons émettent à intervalles réguliers de courtes impulsions sonores à haute fréquence. Ces impulsions se propagent dans l’air à la vitesse du son. Lorsqu’elles rencontrent un objet, elles se réfléchissent et reviennent sous forme d’écho aux capteurs. Celui-ci calcule alors la distance le séparant de la cible sur la base du temps écoulé entre l’émission du signal et la réception de l’écho. La fréquence de ces capteurs est d’environ 40kHz. \\
+\\
+Ces capteurs permettent de détecter un objet se situant entre 25 cm et 250 cm, avec une marge d’erreur d’approximativement 2 cm.\\
+\begin{figure}[H]
+	\centering
+	\caption{Position des capteurs à ultrasons sur le robot}
+	\includegraphics[scale=0.7]{positionUS_Front}
+\end{figure}
+\subsubsection{Capteurs de chocs}
+Le robot ne comporte pas de capteurs de chocs mais, grâce aux capteurs infrarouges situés sur les côtés du robot, il est possible de programmer des comportements de prévention des chocs.
+\pagebreak
+\section{Connexion du robot à l'ordinateur (sous Windows)}
+Dans un premier temps, il faudra s’assurer que le logiciel TeraTerm soit correctement installé sur votre ordinateur. Si TeraTerm n’est pas installé, télécharger le fichier \verb|teraterm.exe| depuis le lien suivant :\\
+\url{https://osdn.net/projects/ttssh2/releases/}\\
+\\
+Installer ensuite le logiciel en suivant les instructions pour une installation classique.\\
+Une fois le logiciel installé, allumez le robot avec l’interrupteur On/Off situé sur l’arrière (cf. Figure : Connectiques robot(1)) et connectez ensuite le robot à votre ordinateur en utilisant le câble USB fourni (cf. Figure Connectiques robot(2)).\\
+\begin{figure}[H]
+	\caption{Connectiques du robot}
+	\includegraphics[width=\textwidth]{positionConnectique}
+\end{figure}
+Lancer maintenant l’application TeraTerm. Une fenêtre indiquant la mise en place d’une nouvelle connexion. Dans notre cas, ce sera l’option \textbf{"Série"} qui sera à prendre en compte. Vérifiez bien que le port utilisé soit : \textbf{COM3 : USB Serial Port (COM3)} (cf. Figure : Nouvelle Connexion TeraTerm)
+\begin{figure}[H]
+	\caption{Nouvelle Connexion TeraTerm}
+	\includegraphics[scale=0.50]{nouvellCoTeraterm}
+\end{figure}
+Une fois ceci fait, rendez-vous dans l’onglet \textbf{"Configuration : Port Serie… }". Un nouvelle fenêtre de configuration apparaîtra, assurez vous que les réglages soient similaires à la figure ci-dessous (cf. Figure : Configuration du Port Serie), puis cliquez sur  \textbf{"New Setting"}
+\begin{figure}[H]
+	\caption{Configuration du port série}
+	\includegraphics[scale=0.50]{configTeraterm}
+\end{figure}
+Le robot terminera ensuite son initialisation et vous aurez un affichage vous demandant le login afin de vous connecter au robot et avoir accès à ses fichiers. Vous devrez alors saisir le login \textbf{"root"} (cf. Figure : login robot) et appuyer sur la touche \textbf{"entrée"} de votre clavier.Vous êtes maintenant connecté au robot. Vous pouvez dès à présent vous rendre dans la section \hyperref[sec:manip]{\textbf{"Programmes de manipulation du robot"}}, pour pouvoir exécuter les différents programmes de tests disponibles pour vérifier le bon fonctionnement des capteurs et actionneurs du robot Khepera IV.
+\begin{figure}[H]
+	\caption{Login robot}
+	\includegraphics[width=\textwidth]{connectionTeraterm}
+\end{figure}
+\pagebreak
+\section{Programmes de manipulation du robot}
+\label{sec:manip}
+Tous les programmes de tests crées sont présents dans un dossier \verb|testProgram| sur le robot. Ce dossier est accessible via la commande \verb|cd testProgram/| et chaque programme de test est exécutable à partir de ce dossier à l'aide de la commande \verb|./xxxxxx|, où xxxxxx est le nom du programme à lancer. La liste des programmes est accessible via la commande \verb|ls -d test_*|.
+\subsection{Roues}
+\verb|./test_wheels|\\
+ \\
+Une fois le test lancé, le programme tente dans un premier temps d’accéder au microcontrôleur pic en initialisant la librairie libkhepera et en se connectant au robot. Si l’accès à cette librairie, permettant de récupérer les fonctions et données nécessaires au lancement du test, ou la connexion au robot échouent, un message d’erreur est affiché sur le terminal et le programme se ferme.\\
+Si aucun problème n’est à déplorer, le programme commence tout d’abord par afficher un menu sur le terminal avec les informations permettant de manipuler le robot. C’est-à-dire choisir la direction des roues, la vitesse de déplacement du robot, et la possibilité de quitter le test. \\
+Ensuite, le programme attend que l’utilisateur presse un des boutons permettant la manipulation du robot et selon la touche enfoncée, l’action liée va être effectuée. Par exemple, pour le déplacement du robot selon une direction choisie, si l’utilisateur presse la touche "z" alors le programme va initialiser la vitesse par défaut, si l’utilisateur ne l’a pas changée auparavant, et orienter les deux roues du robot vers l’avant et commencer à déplacer le robot selon cette direction. Les trois autres directions, à savoir arrière, droite et gauche, sont initialisées en suivant ce même schéma. \\
+En appuyant sur la touche "a", le programme va couper la vitesse des deux moteurs. Pour contrôler la vitesse de déplacement, on peut incrémenter et décrémenter selon deux valeurs, soit 16,95 mm/s soit 67,82 mm/s. Les touches "b" et "n" se chargent de l’incrément et décrément par 16,95 mm/s. Lorsqu’une des deux touches est pressée, le programme vérifie que la vitesse actuelle du robot ne dépasse pas la vitesse maximale ou minimale selon le cas puis va changer la vitesse de déplacement du robot. Ce schéma est le même pour l’incrément et décrément par 67,82 mm/s avec les touches "h" et "j".\\
+Enfin, en appuyant sur la touche "x", le programme se ferme tout en remettant le robot dans son état initial, c’est-à-dire en coupant la vitesse des moteurs.
+\begin{figure}[H]
+	\caption{Exemple d'utilisation du programme de test des roues \& moteurs}
+	\includegraphics[width=\textwidth]{screenRoues}
+\end{figure}
+\subsection{Haut-parleurs}
+\verb|./test_speakers [filename.wav]|\\
+ \\
+Ce programme possède deux mode d’exécution. Le premier sans spécifier de fichier audio, dans ce cas là ce sera le fichier audio par défaut "beep.wav" qui sera lu. Sinon, il est possible de tester deux autres sons en remplaçant [filename.wav] par le nom du fichier. Les deux autres fichiers disponibles sont "beep2.wav" et "beep3.wav".\\
+Une fois le test lancé, le programme tente dans un premier temps d’accéder au microcontrôleur pic en initialisant la librairie libkhepera et en se connectant au robot. Si l’accès à cette librairie permettant de récupérer les fonctions et données nécessaires au lancement du test ou la connexion au robot échouent, un message d’erreur est affiché sur le terminal et le programme se ferme.\\
+Si aucun problème n’est à déplorer, le programme initialise et configure le système de son du robot et désactive tous les capteurs à ultrasons pour éviter les problèmes qui pourraient survenir lors de l’activation des haut-parleurs.\\
+Il demande ensuite de saisir le volume du haut-parleur gauche ainsi que du haut-parleur droit du robot, le volume est compris entre 0\% et 100\%.\\
+Le programme regarde ensuite si un fichier a été mentionné en argument, si tel est le cas il va vérifier qu’il existe et ensuite va faire le lire, on pourra ainsi entendre le son souhaité. Dans le cas où le fichier n’existerait pas, le son par défaut sera joué. (cf. Figures 13 \& 14)\\
+Une fois la lecture terminée, le programme remet le robot dans son état initial et réactive les capteurs à ultrasons.\\
+\begin{figure}[H]
+	\caption{Exemple d'utilisation du programme des haut-parleurs : sans fichier choisi}
+	\includegraphics[width=\textwidth]{screenS_1}
+\end{figure}
+\begin{figure}[H]
+\caption{Exemple d'utilisation du programme des haut-parleurs : avec fichier choisi}
+\includegraphics[width=\textwidth]{screenS_2}
+\end{figure}
+\subsection{Leds}
+\verb|./test_leds|\\ 
+ \\
+Une fois le test lancé, le programme tente dans un premier temps d’accéder au microcontrôleur pic en initialisant la librairie libkhepera et en se connectant au robot. Si l’accès à cette librairie permettant de récupérer les fonctions et données nécessaires au lancement du test ou la connexion au robot échouent, un message d’erreur est affiché sur le terminal et le programme se ferme.\\
+Si aucun problème n’est à déplorer, le programme affiche sur le terminal un message demandant à l’utilisateur de choisir les codes décimaux RGB des trois leds présentes sur le robot. Ces codes sont chacun composés de trois valeurs allant de 0 à 255.\\
+Si l’utilisateur n’a pas écrit toutes les valeurs des codes décimaux RGB, le programme renvoie un message d’erreur sur le terminal et éteint les leds en remplaçant les valeurs entrées par 0.
+Sinon, le programme affiche sur le terminal les valeurs choisies par l’utilisateur pour chaque led, puis affecte les valeurs aux leds et active les leds avec les couleurs choisies par l’utilisateur durant cinq secondes. Enfin, le programme éteint les leds et leur affecte la valeur 0 puis se ferme.\\
+\begin{figure}[H]
+	\caption{Exemple d'utilisation du programme des Leds}
+	\includegraphics[width=\textwidth]{screenLEDS}
+\end{figure}
+\subsection{Odomètre}
+\verb|./test_odometer|\\
+ \\
+Une fois le test lancé, le programme tente dans un premier temps d’accéder au microcontrôleur pic en initialisant la librairie libkhepera et en se connectant au robot. Si l’accès à cette librairie, permettant de récupérer les fonctions et données nécessaires au lancement du test, ou la connexion au robot échouent, un message d’erreur est affiché sur le terminal et le programme se ferme.\\
+Si aucun problème n’est à déplorer, le programme commence tout d’abord par afficher un menu sur le terminal avec les informations permettant de manipuler le robot. C’est-à-dire choisir la direction des roues, la vitesse de déplacement du robot, la possibilité de quitter le test ainsi que la distance parcourue par le robot lors du test.\\
+Ensuite, le programme attend que l’utilisateur presse un des boutons permettant la manipulation du robot et selon la touche enfoncée, l’action liée va être effectuée. Par exemple, pour le déplacement du robot selon une direction choisie, si l’utilisateur presse la touche "z" alors le programme va initialiser la vitesse par défaut, si l’utilisateur ne l’a pas changée auparavant, et orienter les deux roues du robot vers l’avant et commencer à déplacer le robot selon cette direction. Les trois autres directions, à savoir arrière, droite et gauche, sont initialisées en suivant ce même schéma. \\
+En appuyant sur la touche "a", le programme va couper la vitesse des deux moteurs. Pour contrôler la vitesse de déplacement, on peut incrémenter et décrémenter selon deux valeurs, soit 16,95 mm/s, soit 67,82 mm/s. Les touches "b" et "n" se chargent de l’incrément et décrément par 16,95 mm/s. Lorsqu’une des deux touches est pressée, le programme vérifie que la vitesse actuelle du robot ne dépasse pas la vitesse maximale ou minimale selon le cas puis va changer la vitesse de déplacement du robot. Ce schéma est le même pour l’incrément et décrément par 67,82 mm/s avec les touches "h" et "j".\\
+Ajouté à cela, afin de tester l’odomètre du robot, lorsque les touches "z" ou "s" sont pressées, le programme va incrémenter une variable pour la distance parcourue et l’afficher continuellement sur le terminal jusqu’à ce que le programme soit fermé.\\
+Enfin, en appuyant sur la touche "x", le programme se ferme tout en remettant le robot dans son état initial, c’est-à-dire en coupant la vitesse des moteurs.\\
+\begin{figure}[H]
+	\caption{Exemple d'utilisation du programme de l'odometre}
+	\includegraphics[width=\textwidth]{screenODO}
+\end{figure}
+\subsection{Gyroscope}
+\verb|./test_gyroscope|\\
+ \\
+Une fois le test lancé, le programme tente dans un premier temps d’accéder au microcontrôleur pic en initialisant la librairie libkhepera et en se connectant au robot. Si l’accès à cette librairie, permettant de récupérer les fonctions et données nécessaires au lancement du test, ou la connexion au robot échouent, un message d’erreur est affiché sur le terminal et le programme se ferme.\\
+Si aucun problème n’est à déplorer, le programme commence tout d’abord par afficher sur le terminal un menu présentant deux modes pour manipuler le gyroscope. Le premier mode affiche une seule valeur par axe, plus précisément la moyenne des dix valeurs récupérées par le gyroscope pour chaque axe. Le second mode quant à lui, affiche toutes ces valeurs ainsi que leur moyenne pour chaque axe. L’utilisateur est invité à choisir un des deux modes en pressant soit la touche "a" pour le premier mode soit la touche "b" pour le second mode.
+\begin{figure}[H]
+	\caption{Exemple d'utilisation du programme du gyroscope : Choix du mode}
+	\includegraphics[width=\textwidth]{screenG_1}
+\end{figure}
+Avant d’afficher la vue liée à l’un des deux modes choisi par l’utilisateur, le programme commence par récupérer les dix valeurs pour chaque axe x y et z dans un tableau.\\
+Dans le premier mode, affichant seulement la moyenne des valeurs pour chaque axe, le programme lit les dix premières valeurs contenues dans le tableau pour l’axe x et calcule la moyenne de ces valeurs puis l’affiche à l’écran. Le même schéma est répété pour les deux autres axes. L’utilisateur peut décider à tout moment de quitter le test en appuyant sur n’importe quelle touche.\\
+\begin{figure}[H]
+	\caption{Exemple d'utilisation du programme du gyroscope : Choix "a"}
+	\includegraphics[width=\textwidth]{screenG_2}
+\end{figure}
+Dans le second mode, affichant les dix valeurs ainsi que leur moyenne pour chaque axe, le programme lit les dix premières valeurs contenus dans le tableau pour l’axe x puis les affiche à la suite sur l’écran. La moyenne de ces valeurs est ensuite calculée et affichée sur le terminal. Le même schéma est répété pour les deux autres axes et l’ensemble des valeurs pour chaque axe est ensuite rafraîchi toutes les 105 ms. L’utilisateur peut décider à tout moment de quitter le test en appuyant sur n’importe quelle touche.\\
+\begin{figure}[H]
+	\centering
+	\caption{Exemple d'utilisation du programme du gyroscope : Choix "b"}
+	\includegraphics[scale=0.5]{screenG_3}
+\end{figure}
+\subsection{Accéléromètre}
+\verb|./test_accelerometer|\\ 
+ \\
+Une fois le test lancé, le programme tente dans un premier temps d’accéder au microcontrôleur pic en initialisant la librairie libkhepera et en se connectant au robot. Si l’accès à cette librairie, permettant de récupérer les fonctions et données nécessaires au lancement du test, ou la connexion au robot échouent, un message d’erreur est affiché sur le terminal et le programme se ferme.\\
+Si aucun problème n’est à déplorer, le programme commence tout d’abord par afficher sur le terminal un menu présentant deux modes pour manipuler l’accéléromètre. Le premier mode affiche une seule valeur par axe, plus précisément la moyenne des dix valeurs récupérées par l’accéléromètre pour chaque axe. Le second mode quant à lui, affiche toutes ces valeurs ainsi que leur moyenne pour chaque axe. L’utilisateur est invité à choisir un des deux modes en pressant soit la touche «a» pour le premier mode soit la touche «b» pour le second mode.\\
+\begin{figure}[H]
+	\caption{Exemple d'utilisation du programme de l'accéléromètre : Choix du mode}
+	\includegraphics[width=\textwidth]{screenA_1}
+\end{figure}
+Avant d’afficher la vue liée à l’un des deux modes choisi par l’utilisateur, le programme commence par récupérer les dix valeurs pour chaque axe x y et z dans un tableau.\\ 
+Dans le premier mode, affichant seulement la moyenne des valeurs pour chaque axe, le programme lit les dix premières valeurs contenues dans le tableau pour l’axe x et calcule la moyenne de ces valeurs puis l’affiche à l’écran. Le même schéma est répété pour les deux autres axes. L’utilisateur peut décider à tout moment de quitter le test en appuyant sur n’importe quelle touche.\\
+\begin{figure}[H]
+	\caption{Exemple d'utilisation du programme de l'accéléromètre : Mode "a"}
+	\includegraphics[width=\textwidth]{screenA_2}
+\end{figure}
+Dans le second mode, affichant les dix valeurs ainsi que leur moyenne pour chaque axe, le programme lit les dix premières valeurs contenus dans le tableau pour l’axe x puis les affiche à la suite sur l’écran. La moyenne de ces valeurs est ensuite calculée et affichée sur le terminal. Le même schéma est répété pour les deux autres axes et l’ensemble des valeurs pour chaque axe est ensuite rafraîchi toutes les 105 ms. L’utilisateur peut décider à tout moment de quitter le test en appuyant sur n’importe quelle touche.\\
+\begin{figure}[H]
+	\centering
+	\caption{Exemple d'utilisation du programme de l'accéléromètre : Mode "b"}
+	\includegraphics[scale=0.55]{screenA_3}
+\end{figure}
+\subsection{Capteurs infrarouges -- Bottom}
+\verb|test_ir_bottom|\\
+ \\
+Une fois le test lancé, le programme tente dans un premier temps d’accéder au microcontrôleur pic en initialisant la librairie libkhepera et en se connectant au robot. Si l’accès à cette librairie, permettant de récupérer les fonctions et données nécessaires au lancement du test, ou la connexion au robot échouent, un message d’erreur est affiché sur le terminal et le programme se ferme.\\
+Si aucun problème n’est à déplorer, le programme commence tout d’abord par récupérer les valeurs des capteurs dans un tampon, puis attribue ces valeurs à chaque capteur correspondant. Ensuite, le programme affiche sur le terminal chaque valeur liée à un capteur à la suite, et rafraîchi continuellement les valeurs reçues.\\
+Pour vérifier le bon fonctionnement des capteurs, il est possible d’approcher des objets des différents capteurs présents sous le robot afin de vérifier que les valeurs des capteurs concernés par la présence de l’objet augmentent, ou diminuent si l’objet est éloigné de ces capteurs.\\
+Enfin, l’utilisateur est invité, s’il le souhaite, à presser n’importe quelle touche pour quitter le programme.\\
+\begin{figure}[H]
+	\caption{Exemple d'utilisation du programme des capteurs infrarouges -- Bottom}
+	\includegraphics[width=\textwidth]{screenIRB}
+\end{figure}
+\subsection{Capteurs infrarouges}
+\verb|./test_ir|\\
+ \\
+Une fois le test lancé, le programme tente dans un premier temps d’accéder au microcontrôleur pic en initialisant la librairie libkhepera et en se connectant au robot. Si l’accès à cette librairie permettant de récupérer les fonctions et données nécessaires au lancement du test ou la connexion au robot échouent, un message d’erreur est affiché sur le terminal et le programme s’arrête.\\
+Si aucun problème n’est à déplorer, le programme récupère les valeurs des différents capteurs infrarouges et les stocke dans un tampon. Après ça, les valeurs sont associées a chaque capteur et affichées sur la sortie standard et s’actualisent en temps réel.\\
+Pour vérifier le bon fonctionnement des capteurs, approchez des objets des différents capteurs afin de vérifier que les valeurs des capteurs concernés par la présence de l’objet augmentent.\\
+Il suffit ensuite d’appuyer sur n’importe quelle touche du clavier afin de stopper le programme.\\
+\begin{figure}[H]
+	\caption{Exemple d'utilisation du programme des capteurs infrarouges}
+	\includegraphics[width=\textwidth]{screenIRS}
+\end{figure}
+\subsection{Microphone}
+\verb|./test_microphone|\\
+ \\
+Une fois le test lancé, le programme tente dans un premier temps d’accéder au microcontrôleur pic en initialisant la librairie libkhepera et en se connectant au robot. Si l’accès à cette librairie permettant de récupérer les fonctions et données nécessaires au lancement du test ou la connexion au robot échouent, un message d’erreur est affiché sur le terminal et le programme se ferme.\\
+\\
+Si aucun problème n’est à déplorer, le programme commence tout d’abord par arrêter les haut-parleurs s’ils étaient en marche.\\
+\\
+Suite à cela, l’initialisation du son créé par le robot se fait, et si un problème survient, un message d’erreur est affiché sur le terminal et un code d’erreur -2 est renvoyé.\\
+\\
+Le programme coupe ensuite le son des haut-parleurs et des capteurs à ultrasons afin d’éviter un effet Larsen, qui se produit par exemple lorsque les	 microphones captent le son amplifié par les haut-parleurs et le réenregistrent.\\
+ \\
+Dans un second temps, l’utilisateur est convié à entrer le volume des deux microphones séparément, dans un intervalle de 0 à 100 compris, ou par défaut s’il entre 0. Les valeurs entrées sont vérifiées et si une valeur incorrecte est rentrée, l’utilisateur est invité à rentrer de nouvelles valeurs correctes.
+Le volume des microphones est mis à jour et si un problème de configuration du son avec ces paramètres survient, un message d’erreur est envoyé sur le terminal et le volume est remis par défaut.\\
+ \\
+Dans un troisième temps, la durée de l’enregistrement souhaité est demandée à l’utilisateur qui peut entrer une valeur en seconde, si cette valeur est négative ou nulle, le programme l’invite à recommencer. Pour débuter l’enregistrement, une touche quelconque doit être pressée, sauf la touche "a" qui permet de redonner la durée d’enregistrement au besoin. S’ensuit l’enregistrement avec en amont l’extinction des haut-parleurs, toujours pour éviter l’effet Larsen. \\
+ \\
+Enfin, pour écouter le son qui vient d’être enregistré, le programme coupe les microphones et rallume les haut-parleurs puis demande à l’utilisateur d’entrer le volume de ces derniers. Comme les microphones, les valeurs doivent être comprises entre 0 et 100, 0 pour la valeur par défaut de 80 et la vérification des valeurs entrées est faite.\\
+Le volume des haut-parleurs est mis à jour puis le son est joué par le robot jusqu’à sa fin et le programme sauvegarde dans un fichier audio d’extension .wav le son enregistré avec un nom de fichier qui doit être entré par l’utilisateur.
+Après avoir réalisé la sauvegarde, le programme se ferme et le test est terminé.
+\begin{figure}[H]
+\caption{Exemple d'utilisation du programme de test des microphones}
+\includegraphics[width=\textwidth]{screenMicros}
+\end{figure}
+\subsection{Capteurs à ultrasons}
+\verb|./test_us|\\
+ \\
+Une fois le test lancé, le programme tente dans un premier temps d’accéder au microcontrôleur pic en initialisant la librairie libkhepera et en se connectant au robot. Si l’accès à cette librairie permettant de récupérer les fonctions et données nécessaires au lancement du test ou la connexion au robot échouent, un message d’erreur est affiché sur le terminal et le programme se ferme.\\
+\\
+Si aucun problème n’est à déplorer, le programme demande dans un premier temps le(s) capteur(s) à activer pour effectuer le test. Chaque capteur possède une valeur propre. L’addition de ces valeurs permet d’activer plusieurs capteurs en même temps. Dans le cas où aucune valeur ou une valeur incorrecte est saisie, tous les capteurs seront activés par défaut.\\
+\begin{figure}[H]
+\caption{Exemple d'utilisation du programme des capteurs à ultrasons : Choix des capteurs à activer}
+\includegraphics[width=\textwidth]{screenUSF_1}
+\end{figure}
+Une fois la phase de saisie terminée, le programme présente les informations importantes concernant la compréhension des données qui seront ensuite affichées à l’écran.\\
+\\
+Le programme affiche donc la distance en centimètre des objets se situant dans le rayon de détection des capteurs activés. Si l’objet se trouve hors de l’intervalle de détection (entre 25 et 250 cm) alors une valeur égale à 1000 sera affichée. Si le capteur est désactivé, la valeur 2000 sera affichée.\\
+\\
+Pour quitter le programme, il suffit d’appuyer sur n’importe quelle touche du clavier.\\
+\begin{figure}[H]
+\caption{Exemple d'utilisation du programme des capteurs a ultrasons : Affichage des valeurs}
+\includegraphics[width=\textwidth]{screenUSF_2}
+\end{figure}
+\subsection{Capteurs de chocs}
+\verb|./test_shock|\\
+ \\
+Une fois le test lancé, le programme tente dans un premier temps d’accéder au microcontrôleur pic en initialisant la librairie libkhepera et en se connectant au robot. Si l’accès à cette librairie, permettant de récupérer les fonctions et données nécessaires au lancement du test, ou la connexion au robot échouent, un message d’erreur est affiché sur le terminal et le programme se ferme.\\
+Si aucun problème n’est à déplorer, le programme commence tout d’abord par récupérer les valeurs des capteurs infrarouges dans un tableau. Après cela, le terminal affiche à la suite les valeurs de chaque capteur en les rafraîchissant régulièrement et vérifie qu’aucun objet n’est trop proche du robot. Si un objet est détecté comme étant trop proche du robot, le programme affiche quel capteur a détecté un potentiel choc à venir, avec la distance de l’objet par rapport au robot. Puis le programme se ferme après avoir délivré ce message.\\
+Si aucun objet n’est détecté comme étant trop proche du robot, le programme continue à afficher les valeurs des capteurs infrarouges, en attendant que soit l’utilisateur presse n’importe quelle touche pour le quitter soit que les capteurs à infrarouges détectent un objet se rapprochant du robot.\\
+\begin{figure}[H]
+	\centering
+	\caption{Exemple d'utilisation du programme du "capteur de chocs" : pas de choc anticipé}
+	\includegraphics[scale=0.5]{screenC_1}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Exemple d'utilisation du programme du "capteur de chocs" : choc anticipé}
+	\includegraphics[scale=0.5]{screenC_2}
+\end{figure}
+\pagebreak
+\listoffigures
 \end{document}
