@@ -86,12 +86,7 @@ int pivoter(double degre, int roueG)
      * alors il faut faire le rapport sur 360°)
      */
     espacement_roues = 105,4;
-    pulsationCible = (degre/360.0)*(2.0*M_PI*espacement_roues)/KH4_PULSE_TO_MM; // vérifier que quand on fait int*double -> renvoie double
-    
-    /*if(roueG == 1){
-    	pulsationCibleG = (0/360)*(2*M_PI*espacement_roues)/KH4_PULSE_TO_MM; // vérifier que quand on fait int*double -> renvoie double
-    	pulsationCibleD = (degre/360)*(2*M_PI*espacement_roues)/KH4_PULSE_TO_MM;
-    }*/
+    pulsationCible = (degre/360.0)*(2.0*M_PI*espacement_roues)/KH4_PULSE_TO_MM;
     
     if( kh4_SetMode( kh4RegPosition,dsPic ) < 0)
         {
