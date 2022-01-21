@@ -84,11 +84,6 @@ int parcourir(int distance)
     	return 1;
     }
     
-    printf("\n wait 5s \n");
-    sleep(5); // Wait 5 seconds
-    kh4_get_position(&roueGauche,&roueDroite,dsPic);
-    printf("\n distance: %d\npulsationCible: %lf\nencoders: left %ld | right %ld\n",distance, pulsationCible, roueGauche, roueDroite);
-    
     return 0;
 }
 
@@ -97,20 +92,11 @@ int parcourir(int distance)
  * Soit en l'entrant directement à l'appel du programme. ex: ./parcours_dist_mm 50
  * Soit en l'entrant une fois le programme appelé.
  */
-int main(int argc, char * argv)
+int main(void)
 {
     int distance;
-    if(argc > 2)
-    {
-        printf("parcours_dist_mm -> ERREUR: nombre d'argument incorrect");
-        return 1;
-    }
-    else if(argc == 1){
-        printf("\nEntrez une distance en millimetres: "); scanf("%d", &distance);
-    } else
-    {
-        distance = (int) argv[1]; //On suppose que argv[1] est un entier sans le tester
-    }
+
+    printf("\nEntrez une distance en millimetres: "); scanf("%d", &distance);
 
     /* le robot parcours une certaine distance en mm en avançant droit devant lui */
     if(parcourir(distance) != 0)
