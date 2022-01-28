@@ -88,9 +88,8 @@ int parcourir(int distance)
 }
 
 /**
- * L'utilisateur peut entrer de 2 manières la distance à parcourir en mm:
- * Soit en l'entrant directement à l'appel du programme. ex: ./parcours_dist_mm 50
- * Soit en l'entrant une fois le programme appelé.
+ * L'utilisateur peut entrer la distance qu'il souhaite parcourir pour le robot
+ * une fois le programme appelé.
  */
 int main(void)
 {
