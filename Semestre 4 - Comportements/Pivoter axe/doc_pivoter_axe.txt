@@ -2,7 +2,7 @@ Le programme pivoter_axe s'execute sur le terminal en allant dans le fichier cou
 
 L'utilisateur est ensuite invité par le terminal à entrer un degré.
 
-A l'appel de la méthode "parcourir", le mode du robot est positionné sur "RegPosition" soit le contrôle des roues et des moteurs
+A l'appel de la méthode "pivoter", le mode du robot est positionné sur "RegPosition" soit le contrôle des roues et des moteurs
 par l'odometre et le profil de la vitesse est modifié pour limité les variations de vitesse par le robot
 
 Le programme récupère les positions actuelles de chacune des 2 roues (unité de mesure utilisée en "pulse" pour le nombre de pulsation affectuées)
