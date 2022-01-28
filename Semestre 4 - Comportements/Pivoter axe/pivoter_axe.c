@@ -106,7 +106,7 @@ int pivoter(double degre)
 }
 
 /**
- * L'utilisateur entre le degrer de rotation que le robot effectue
+ * L'utilisateur entre le degré de rotation que le robot effectue
  */
 int main(void)
 {
