@@ -24,16 +24,30 @@ int init()
 	return 0;
 }
 
+void end() {
+    kh4_set_speed(0, 0, dsPic);
+    kh4_SetMode(kh4RegIdle, dsPic);
+}
+
 int main()
 {
   int errInit;
   char buffer[100];
+  short distance_value;
+
+  kh4_SetMode(kh4RegSpeed, dsPic);
 
 	if ((errInit = init()) != 0)
         return errInit;
 
     kh4_activate_us(4, dsPic);
-    while(kh4_measure_us(buffer, dsPic))
-
+    kh4_set_speed(200, 200, dsPic);
+    do {
+        kb_clrscr();
+        kh4_measure_us(buffer, dsPic);
+        distance_value = (short)(buffer[4] | buffer[5]<<8);
+        printf("Distance actuelle : %4d cm.", distance_value);
+    } while(distance_value > 50);
+    end();
     return 0;
 }
