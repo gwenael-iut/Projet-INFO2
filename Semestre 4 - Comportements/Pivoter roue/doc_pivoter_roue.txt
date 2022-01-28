@@ -1,0 +1,19 @@
+Le programme pivoter_roue s'execute sur le terminal en allant dans le fichier courant au programme et éxécuter la commande ./pivoter_roue
+
+L'utilisateur est ensuite invité par le terminal à entrer un degré et à choisir la roue sur laquelle le robot fera sa rotation.
+
+A l'appel de la méthode "pivoter", le mode du robot est positionné sur "RegPosition" soit le contrôle des roues et des moteurs
+par l'odomètre et le profil de la vitesse est modifié pour limité les variations de vitesse par le robot
+
+Le programme récupère les positions actuelles de chacune des 2 roues (unité de mesure utilisée en "pulse" pour le nombre de pulsation affectuées)
+Le robot va positionner ses roues sur le nombre de pulsation souhaité.
+
+Le nombre de pulsation dont doit varier 1 des 2 roues est déterminée par l'équation:
+      puls_cible = rapport_degre_sur_360 * périmètre_cercle_diametre_roues * conversion_puls_to_mm
+                 = (degre/360.0) * (2.0 * PI * espacement_roues) * revolution_roue_pulse / (diametre_roue*PI)
+                 = (degre/360.0) * (2.0 * espacement_roues) * revolution_roue_pulse / diametre_roue
+                 = (degre/360.0) * (2.0 * 52,7) * 19456 / 42
+
+Les nouvelles positions de chacune des deux roues en pulse sont déterminées par les équations:
+      nouvelle_pos_roue_mobile = ancienne_pos_roue_mobile + (long)(puls_cible)
+      nouvelle_pos_roue_immobile = ancienne_pos_roue_immobile + (long)(0.0)
