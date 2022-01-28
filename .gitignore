@@ -1,2 +1,8 @@
 #Ignorer l'archive créée par LaTeX
 *.synctex.gz
+
+#Ignorer le gitignore
+.gitignore
+
+#Ignorer la librairie khepera
+libkhepera-1.0
