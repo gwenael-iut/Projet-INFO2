@@ -2,7 +2,7 @@
 /* -------      PARCOURS ACCELERATION      ------- */
 /* -------              ROUES              ------- */
 /* ----------------------------------------------- */
-/* ------- Fichier : parcours_accel_mm.c    ------ */
+/* ------- Fichier : parcours_1m_accel.c    ------ */
 /* -------                                  ------ */
 /* ------- Auteur  : BASCOUR Gwenael        ------ */
 /* ------- Auteur  : NAYET Morgan           ------ */
