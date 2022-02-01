@@ -52,10 +52,17 @@ int main()
         distance_value = (short)(buffer[4] | buffer[5]<<8);
         printf("Distance actuelle : %4d cm.", distance_value);
     } while(distance_value == 1000);
+    kh4_set_speed(0, 0, dsPic);
 
     // Distance value != 1000 : Le capteur a détécté le mur.
     usleep(10000);
-    kh4_SetSpeedProfile(3, 0, 20, 1, 400, dsPic);
+
+    int accinc=3;
+    int accdiv=0;
+    int minspacc=20;
+    int minspdec=1;
+    int maxsp=400;
+    kh4_SetSpeedProfile(accinc,accdiv,minspacc, minspdec,maxsp,dsPic );
     // On mesure la distance entre l'objet et le robot (en milimètres);
     kh4_measure_us(buffer, dsPic);
     distance_value = (short)(buffer[4] | buffer[5]<<8);
