@@ -57,6 +57,8 @@ int main()
     // Distance value != 1000 : Le capteur a détécté le mur.
     usleep(10000);
 
+    kh4_SetMode(kh4RegPosition, dsPic);
+
     int accinc=3;
     int accdiv=0;
     int minspacc=20;
@@ -74,7 +76,6 @@ int main()
     cible = distance_value/KH4_PULSE_TO_MM;
 
     // On avance jusqu'à 50 cm du mur
-    kh4_SetMode(kh4RegPosition, dsPic);
     kh4_set_position(rGauche+(long)cible), rDroite+(long)cible, dsPic);
 
     end();
