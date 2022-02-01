@@ -59,12 +59,14 @@ int main()
     // On mesure la distance entre l'objet et le robot (en milimètres);
     kh4_measure_us(buffer, dsPic);
     distance_value = (short)(buffer[4] | buffer[5]<<8);
-    distance_value *= 10;
+    distance_value -= 50; // On enlève 50 cm
+    distance_value *= 10; // On converti en mm
 
     kh4_get_position(&rGauche, &rDroite, dsPic);
 
     cible = distance_value/KH4_PULSE_TO_MM;
 
+    // On avance jusqu'à 50 cm du mur
     kh4_SetMode(kh4RegPosition, dsPic);
     kh4_set_position(rGauche+(long)cible), rDroite+(long)cible, dsPic);
 
