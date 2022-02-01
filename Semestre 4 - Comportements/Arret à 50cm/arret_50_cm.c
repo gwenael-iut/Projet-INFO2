@@ -25,6 +25,7 @@ int init()
 }
 
 void end() {
+    kh4_SetMode(kh4RegSpeed, dsPic);
     kh4_set_speed(0, 0, dsPic);
     kh4_SetMode(kh4RegIdle, dsPic);
 }
@@ -54,6 +55,7 @@ int main()
 
     // Distance value != 1000 : Le capteur a détécté le mur.
     usleep(10000);
+    kh4_SetSpeedProfile(3, 0, 20, 1, 400, dsPic);
     // On mesure la distance entre l'objet et le robot (en milimètres);
     kh4_measure_us(buffer, dsPic);
     distance_value = (short)(buffer[4] | buffer[5]<<8);
