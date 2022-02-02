@@ -24,6 +24,21 @@ int init()
     return 0;
 }
 
+int raz() {
+
+    if(init() != 0) {
+        return 1;
+    }
+
+    kh4_set_speed(0, 0, dsPic); // Arret du robot
+
+    /* Mise du mode des contrôleurs des moteurs des roues sur 3 pour les contrôler grâce au nombre de pulsation de l'odomètre */
+    if (kh4_SetMode(kh4RegPosition, dsPic) < 0){
+        printf("ERREUR: Echec de l'arret des controleurs des moteurs");
+        return 1;
+    }
+}
+
 void end() {
     kh4_SetMode(kh4RegSpeed, dsPic);
     kh4_set_speed(0, 0, dsPic);
@@ -57,7 +72,9 @@ int main()
     // Distance value != 1000 : Le capteur a détécté le mur.
     usleep(10000);
 
-    kh4_SetMode(kh4RegPosition, dsPic);
+    if(raz() != 0) {
+        return 1;
+    }
 
     int accinc=3;
     int accdiv=0;
@@ -72,12 +89,23 @@ int main()
     distance_value -= 50; // On enlève 50 cm
     distance_value *= 10; // On converti en mm
 
-    kh4_get_position(&rGauche, &rDroite, dsPic);
+    kb_clrscr();
+    printf("Distance à parcourir : %4d cm.", distance_value);
+
+    if(kh4_get_position(&rGauche, &rDroite, dsPic) < 0) {
+        perror("kh4_get_position -> ");
+        return 1;
+    }
 
     cible = distance_value/KH4_PULSE_TO_MM;
 
     // On avance jusqu'à 50 cm du mur
-    kh4_set_position(rGauche+(long)cible, rDroite+(long)cible, dsPic);
+    if(kh4_set_position(rGauche+(long)cible,
+                        rDroite+(long)cible,
+                        dsPic) < 0) {
+        perror("kh4_set_position -> ");
+        return 1;
+    }
 
     end();
     return 0;
