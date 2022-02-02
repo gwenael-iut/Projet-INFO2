@@ -34,7 +34,7 @@ int main()
 {
     int errInit;
     char buffer[100];
-    short distance_value;
+    int distance_value;
 
     int rDroite,
         rGauche;
@@ -49,7 +49,7 @@ int main()
     do {
         kb_clrscr();
         kh4_measure_us(buffer, dsPic);
-        distance_value = (short)(buffer[4] | buffer[5]<<8);
+        distance_value = (buffer[4] | buffer[5]<<8);
         printf("Distance actuelle : %4d cm.", distance_value);
     } while(distance_value == 1000);
     kh4_set_speed(0, 0, dsPic);
@@ -65,9 +65,10 @@ int main()
     int minspdec=1;
     int maxsp=400;
     kh4_SetSpeedProfile(accinc,accdiv,minspacc, minspdec,maxsp,dsPic );
+
     // On mesure la distance entre l'objet et le robot (en milimètres);
     kh4_measure_us(buffer, dsPic);
-    distance_value = (short)(buffer[4] | buffer[5]<<8);
+    distance_value = (buffer[4] | buffer[5]<<8);
     distance_value -= 50; // On enlève 50 cm
     distance_value *= 10; // On converti en mm
 
@@ -76,7 +77,7 @@ int main()
     cible = distance_value/KH4_PULSE_TO_MM;
 
     // On avance jusqu'à 50 cm du mur
-    kh4_set_position(rGauche+(long)cible), rDroite+(long)cible, dsPic);
+    kh4_set_position(rGauche+(long)cible, rDroite+(long)cible, dsPic);
 
     end();
     return 0;
