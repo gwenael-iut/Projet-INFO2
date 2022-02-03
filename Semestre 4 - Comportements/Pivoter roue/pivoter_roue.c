@@ -136,6 +136,9 @@ int main(void)
     }else{
         roueG = 0;
     }
+	
+    usleep(5000000);
+	
     /* le robot tourne d'un certain degrer sur l'axe d'une roue */
     if(pivoter(degre, roueG) != 0)
     {
