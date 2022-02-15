@@ -1,0 +1,23 @@
+Le programme parcours_piece s'execute sur le terminal en allant dans le fichier courant au programme et éxécuter la commande ./parcours_piece.
+
+A l'appel de la méthode "parcourir", le mode du robot est positionné sur "RegPosition" soit le contrôle des roues et des moteurs
+par l'odometre et le profil de la vitesse est modifié pour limité les variations de vitesse par le robot
+
+Le programme récupère les positions actuelles de chacune des 2 roues (unité de mesure utilisée en "pulse" pour pulsation)
+Le robot va positionner ses roues sur le nombre de pulsation souhaité, pour celà il avancera tout droit.
+La nouvelle position de chaque roue en pulse est déterminée par l'équation:
+      nouvelle_pos = ancienne_pos + (long)(distance_mm * revolution_roue_pulse / (diametre_roue*PI))
+                   = ancienne_pos + (long)(distance_mm * 19456 / (42 * PI) )
+
+
+Le robot à une vitesse linéaire avec coefficient positif, sa vitesse augmente progressivement.
+L'accéléaration est constante à 30 pulsations/sec
+
+Pour gérer l'accélération du robot, on utilise la fonction :
+kh4_SetSpeedProfile(accinc, accdiv, minspacc, minspdec, maxsp, dsPic );
+
+accinc   : correspond au nombre de pulsations/sec ajoutées à chaque accélération
+accdiv   : la vitesse augmente après chaque X+1 pulsations de l'odomètre
+minspacc : correspond au nombre de pulsations/sec minimales ajoutées à chaque accélération
+minspdec : paramètre en lien avec les accélération linéaire (non utilisé)
+maxsp    : valeur maximale de la vitesse possible 1200 pulsations/sec
