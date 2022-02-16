@@ -1,0 +1,37 @@
+Le programme parcours_piece s'execute sur le terminal en allant dans le fichier courant au programme et éxécuter la commande ./parcours_piece.
+
+A l'appel de la méthode "parcourir", le mode du robot est positionné sur "RegSpeed" soit le contrôle des roues par les moteurs.
+La méthode boucle infiniment (parcours de la pièce à l'infini jusqu'à arrêt manuel du robot ou perte de batterie)
+Le robot avance tout droit à vitesse constante et cherche perpétuellement un obstacle en faisant appel à la méthode "detect".
+Quand un obstacle est trouvé, le robot s'arrête puis, selon le capteur ultrasonnique qui détecte l'obstacle, fait appel à la méthode "pivoter" et réitère sa boucle infinie
+
+Le programme dans la méthode "pivoter" récupère les positions actuelles de chacune des 2 roues (unité de mesure utilisée en "pulse" pour pulsation)
+Le robot va positionner ses roues sur le nombre de pulsation selon le degré souhaité, pour celà il effectura une rotation sur son axe.
+La nouvelle position de chaque roue en pulse est déterminée par l'équation:
+      pulsationCible = (degre_souhaité/degre_cercle)*(périmètre_cercle) * revolution_roue_pulse / (diametre_roue*PI)
+                     = (degre_souhaité/360) * 2 * PI * distance_roues / 2 * revolution_roue_pulse / (diametre_roue*PI)
+                     = degre_souhaité / 360 * distance_roues_mm * revolution_roue_pulse / diametre_roue
+                     = degre_souhaité / 360 * 105.4 * 19456 / 42
+                     = degre_souhaite * 527/210 * 2432/45
+                     = degre_souhaite * 640832/3725
+      nouvellePosroueGauche = anciennePosRoueGauche + (long) pulsationCible
+      nouvellePosroueDroite = anciennePosRoueDroite - (long) pulsationCible
+Le robot à une vitesse consatnte lors de sa rotation.
+Pour gérer la vitesse du robot, on utilise la fonction :
+kh4_SetSpeedProfile(accinc, accdiv, minspacc, minspdec, maxsp, dsPic );
+
+accinc   : correspond au nombre de pulsations/sec ajoutées à chaque accélération
+accdiv   : la vitesse augmente après chaque X+1 pulsations de l'odomètre
+minspacc : correspond au nombre de pulsations/sec minimales ajoutées à chaque accélération
+minspdec : paramètre en lien avec les accélération linéaire (non utilisé)
+maxsp    : valeur maximale de la vitesse possible 1200 pulsations/sec
+
+Le programme dans la méthode "detect" récupère la valeur des trois capteurs ultrasoniques et selon le capteur qui détecte un obstacle ou non.
+La méthode renvoie
+0 si aucun obstacle détecté;
+1 si le capteur avant-gauche détecte un obstacle;
+2 si le capteur avant détecte un obstacle;
+3 si le capteur avant-droit détecte un obstacle;
+La méthode ne renvoie la détection que d'un seul des trois capteurs (même si plusieurs capteurs captent un obstacle)
+L'ordre de renvoie des capteurs est le suivant:
+Le capteur avant-gauche puis avant puis avant-droit.

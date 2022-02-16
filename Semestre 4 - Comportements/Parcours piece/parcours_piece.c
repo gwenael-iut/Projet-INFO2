@@ -33,7 +33,7 @@ int raz()
         return -1;
     }
 
-    kh4_set_speed(0, 0, dsPic); // Arret du robot
+    kh4_set_speed(0, 0, dsPic); // Arrêt du robot
 
     /* Mise du mode des contrôleurs des moteurs des roues sur 3 pour les contrôler grâce au nombre de pulsation de l'odomètre */
     if (kh4_SetMode(kh4RegIdle, dsPic) < 0){
@@ -45,14 +45,14 @@ int raz()
 }
 
 /**
- * Fais pivoter le robot vers sa droite d'un certain degré
+ * Fait pivoter le robot vers sa droite d'un certain degré
  */
 int pivoter(double degre)
 {
     int roueDroite, roueGauche;
     int maxsp,accinc,accdiv,minspacc, minspdec; // SetSpeedProfile
     double pulsationCible;
-    double espacement_roues_2; //rayon d'un cercle ayant pour centre l'axe central du robot (soit la moitié de la distance entre les deux roues
+    double espacement_roues_2; // Rayon d'un cercle ayant pour centre l'axe central du robot (soit la moitié de la distance entre les deux roues)
 
     if (raz() != 0)
     {
@@ -79,10 +79,10 @@ int pivoter(double degre)
         return -1;
     }
 
-    /* Rotation des roues par une rotation du rapport entre le degre demandé
+    /* Rotation des roues par une rotation du rapport entre le degré demandé
      * et le rayon du robot
      * (le périmètre du robot étant de 2.PI.r alors 360°=2.PI.r
-     * donc si l'on désire pivoter de degre,
+     * donc si l'on désire pivoter de degré,
      * alors il faut faire le rapport sur 360°)
      */
     espacement_roues_2 = 52,7;
@@ -95,19 +95,17 @@ int pivoter(double degre)
     }
 
     if ( kh4_set_position(roueGauche+(long)pulsationCible,
-						  roueDroite-(long)pulsationCible,
-					      dsPic) < 0)
+			  roueDroite-(long)pulsationCible,
+			  dsPic) < 0)
     {
-	    perror("kh4_set_position -> ");
-		return -1;
-	}
-
-
+        perror("kh4_set_position -> ");
+	return -1;
+    }
     return 0;
 }
 
 /**
- * renvoie le capteur us qui détecte en premier un obstacle
+ * Renvoie le capteur us qui détecte en premier un obstacle
  * @param distanceDetect la distance minimale en mm à laquelle le robot détecte un obstacle
  * @return 0 si le capteur ne détecte aucun obstacle
  * @return 1 si le capteur avant-gauche détecte un obstacle
@@ -126,7 +124,6 @@ int detect(int distanceDetect)
         printf("detect -> La distance minimale de detection des ultrasons commence a partir de 25cm");
         return -1;
     }
-
 
     /* Récupère les valeurs des capteurs et les stocke dans le tampon  */
     kh4_measure_us(Buffer, dsPic);
@@ -149,29 +146,28 @@ int detect(int distanceDetect)
     return 0;
 }
 
-int parcour(void)
+int parcours(void)
 {
 	int capteur_us;
         int degre_a_pivoter;
 
         if (raz() != 0)
-    	    {
-    	        perror("raz -> ");
-    	        return -1;
-    	    }
+    	{
+    	    perror("raz -> ");
+    	    return -1;
+    	}
 
-        if( kh4_SetMode( kh4RegSpeed,dsPic ) < 0)
-        	    	    {
-        	    	        perror("kh4_SetMode -> ");
-        	    	        return -1;
-        	    	    }
+        if(kh4_SetMode( kh4RegSpeed,dsPic ) < 0)
+        {
+            perror("kh4_SetMode -> ");
+            return -1;
+        }
         kh4_set_speed(200, 200, dsPic);
-
 
         while(1) {
 
             //TODO automatiser l'entier dans detect genre l'utilisateur param la distance
-	        while((capteur_us = detect(300)) == 0); //methode bloquante , se débloque quand un obstacle est détecté
+	    while((capteur_us = detect(300)) == 0); // Méthode bloquante, se débloque quand un obstacle est détecté
 
             if(capteur_us == 1)
             {
@@ -195,7 +191,7 @@ int parcour(void)
             }
 
         kh4_set_speed(0, 0, dsPic);
-	    /* le robot tourne d'un certain degré sur l'axe d'une roue */
+	    /* Le robot tourne d'un certain degré sur l'axe d'une roue */
 	    if(pivoter(degre_a_pivoter) != 0)
 	    {
 	        perror("\npivoter -> ");
@@ -204,26 +200,25 @@ int parcour(void)
 
 	    usleep(3000000);
 
-	    if( kh4_SetMode( kh4RegSpeed,dsPic ) < 0)
-	    	    {
-	    	        perror("kh4_SetMode -> ");
-	    	        return -1;
-	    	    }
+	    if(kh4_SetMode( kh4RegSpeed,dsPic ) < 0)
+	    {
+	        perror("kh4_SetMode -> ");
+	    	return -1;
+	    }
 	    kh4_set_speed(200, 200, dsPic);
 	}
 	return 0;
 }
 
 /**
- * 
+ * Lance la méthode parcours afin de parcourir une pièce en autonomie
  */
 int main(void)
 {
 
-
-    if( parcour() != 0 )
+    if( parcours() != 0 )
     {
-    	perror("parcour -> ");
+    	perror("parcours -> ");
     	return -1;
     }
 
