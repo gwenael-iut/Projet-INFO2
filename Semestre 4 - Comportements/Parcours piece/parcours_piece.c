@@ -98,12 +98,6 @@ int pivoter(double degre) {
     return 0;
 }
 
-int isOverflown(int us, int us1, int us2) {
-    if(us == 1000 || us1 == 1000 || us2 == 1000)
-        return 1;
-    return 0;
-}
-
 /**
  * Renvoie le capteur qui détecte en premier un obstacle
  * @param distanceDetect la distance minimale en mm à laquelle le robot détecte un obstacle
@@ -113,41 +107,23 @@ int isOverflown(int us, int us1, int us2) {
  * @return 3 si le capteur avant-droit détecte un obstacle
  */
 int detect() {
-    int overflow;
-    char BufferUS[100];
-    int front_left,
-            front,
-            front_right;
+    char BufferIR[100];
+    int bufferValueL,
+            bufferValueF,
+            bufferValueR;
 
-    kh4_activate_us(14, dsPic);
-    kh4_measure_us(BufferUS, dsPic);
+    kh4_proximity_ir(BufferIR, dsPic);
 
-    front_left = (BufferUS[1 * 2] | BufferUS[1 * 2 + 1] << 8);
-    front = (BufferUS[2 * 2] | BufferUS[2 * 2 + 1] << 8);
-    front_right = (BufferUS[3 * 2] | BufferUS[3 * 2 + 1] << 8);
+    bufferValueL = (BufferIR[1*2] | BufferIR[1*2+1] << 8);
+    bufferValueF = (BufferIR[2*2] | BufferIR[2*2+1] << 8);
+    bufferValueR = (BufferIR[3*2] | BufferIR[3*2+1] << 8);
 
-    overflow = isOverflown(front_left, front, front_right);
-
-    if(overflow) {
-        char BufferIR[100];
-        int bufferValueL,
-                bufferValueF,
-                bufferValueR;
-
-        kh4_proximity_ir(BufferIR, dsPic);
-
-        bufferValueL = (BufferIR[1*2] | BufferIR[1*2+1] << 8);
-        bufferValueF = (BufferIR[2*2] | BufferIR[2*2+1] << 8);
-        bufferValueR = (BufferIR[3*2] | BufferIR[3*2+1] << 8);
-
-        if(bufferValueL >= 950)
-            return 1;
-        if(bufferValueF >= 950)
-            return 2;
-        if(bufferValueR >= 950)
-            return 3;
-    }
-
+    if(bufferValueL >= 950)
+        return 1;
+    if(bufferValueF >= 950)
+        return 2;
+    if(bufferValueR >= 950)
+        return 3;
     return 0;
 }
 
