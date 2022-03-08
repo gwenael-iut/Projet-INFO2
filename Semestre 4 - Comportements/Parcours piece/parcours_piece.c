@@ -10,7 +10,7 @@
 /* ------- Auteur  : DA COSTA Yacine        ------ */
 /* ----------------------------------------------- */
 
-#include <khepera/khepera.h>
+#include "khepera/khepera.h"
 #include <math.h>
 
 static knet_dev_t *dsPic; // Accès au microcontrôleur Pic du robot
@@ -99,7 +99,7 @@ int pivoter(double degre) {
 }
 
 int isOverflown(int us, int us1, int us2) {
-    if(us == 1000 || us1 == 1000 || us2 == 1000)
+    if(us <= 25 || us1 <= 25 || us2 <= 25)
         return 1;
     return 0;
 }
@@ -119,7 +119,6 @@ int detect() {
             front,
             front_right;
 
-    kh4_activate_us(14, dsPic);
     kh4_measure_us(BufferUS, dsPic);
 
     front_left = (BufferUS[1 * 2] | BufferUS[1 * 2 + 1] << 8);
