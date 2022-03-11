@@ -1,6 +1,6 @@
 /* ----------------------------------------------- */
 /* -------      PROGRAMME DE PARCOURS       ------ */
-/* -------           LABYRINTHE             ------ */
+/* -------            LABYRINTHE            ------ */
 /* -------        ROUES & INFRAROUGES       ------ */
 /* ----------------------------------------------- */
 /* ------- Fichier : labyrinthe.c           ------ */
@@ -151,54 +151,47 @@ int detect(int rayonIr)
     return 3; // Tous les capteurs détectent un obstacle
 
 }
-/*
+
 int parcours(void)
 {
-	int capteur_us;
-        int degre_a_pivoter;
+	int capteur_ir_comportement;
+    int degre_a_pivoter;
 
-        if (raz() != 0)
-    	{
-    	    perror("raz -> ");
-    	    return -1;
-    	}
+    if (raz() != 0)
+    {
+    	perror("raz -> ");
+        return -1;
+   	}
 
-        if(kh4_SetMode( kh4RegSpeed,dsPic ) < 0)
+    if(kh4_SetMode( kh4RegSpeed,dsPic ) < 0)
+    {
+        perror("kh4_SetMode -> ");
+        return -1;
+    }
+    kh4_set_speed(200, 200, dsPic);
+
+    while(1) {
+
+	    while( (capteur_ir_comportement = detect(900) ) == 1); // Méthode bloquante, se débloque quand un obstacle est détecté
+
+        if(capteur_ir_comportement == 0)
         {
-            perror("kh4_SetMode -> ");
+            degre_a_pivoter = 90;
+        }else if(capteur_ir_comportement == 2)
+        {
+            degre_a_pivoter = -90;
+        }else if(capteur_ir_comportement == 3)
+        {
+           degre_a_pivoter = 180;
+        }else
+        {
+            perror("parcour -> ");
             return -1;
         }
-        kh4_set_speed(200, 200, dsPic);
-
-        while(1) {
-
-            //TODO automatiser l'entier dans detect genre l'utilisateur param la distance
-	    while((capteur_us = detect(300)) == 0); // Méthode bloquante, se débloque quand un obstacle est détecté
-
-            if(capteur_us == 1)
-            {
-                degre_a_pivoter = 90;
-            }else if(capteur_us == 2)
-            {
-                if(rand() %2 )
-                {
-                    degre_a_pivoter = -135;
-                }else
-                {
-                    degre_a_pivoter = 135;
-                }
-            }else if(capteur_us == 3)
-            {
-               degre_a_pivoter = -90;
-            }else
-            {
-                perror("parcour -> ");
-                return -1;
-            }
 
         kh4_set_speed(0, 0, dsPic);
 	    // Le robot tourne d'un certain degré sur l'axe d'une roue
-	   if(pivoter(degre_a_pivoter) != 0)
+	    if(pivoter(degre_a_pivoter) != 0)
 	    {
 	        perror("\npivoter -> ");
 	        return -1;
@@ -215,24 +208,18 @@ int parcours(void)
 	}
 	return 0;
 }
-*/
+
 
 /**
  * Lance la méthode parcours afin de parcourir une pièce en autonomie
  */
 int main(void)
 {
-	int text;
-/*
     if( parcours() != 0 )
     {
     	perror("parcours -> ");
     	return -1;
     }
-*/
-	while(1) {
-		text = detect(950);
-		printf("return %d\n", text);
-	}
+
     return 0;
 }
