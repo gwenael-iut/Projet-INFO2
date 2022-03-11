@@ -12,6 +12,10 @@
 #include <khepera/khepera.h>
 #include <math.h>
 
+#define ECART_IR 600
+#define MAX_DIST_OBS 1010
+#define MIN_DIST_OBS 100
+
 static knet_dev_t *dsPic; // Accès au microcontrôleur Pic du robot
 
 /**
@@ -42,6 +46,48 @@ int raz()
     }
 
     return 0;
+}
+
+/**
+ * Fait avancer le robot grâce au contrôle des roues par l'odomètre
+ * @param distance en mm
+ * @return 0 si avancement effectué, 0 si erreur
+ */
+int avancer(int distance)
+{
+	int roueDroite,
+	    roueGauche;
+	int maxsp, accinc, accdiv, minspacc, minspdec; // SetSpeedProfile
+	double pulsationCible;
+
+	accinc=3;
+	accdiv=0;
+	minspacc=20;
+	minspdec=1;
+	maxsp=400;
+	kh4_SetSpeedProfile(accinc,accdiv,minspacc, minspdec,maxsp,dsPic );
+
+	/* Affectation de la position des 2 roues */
+	if (kh4_get_position(&roueGauche, &roueDroite, dsPic) < 0)
+	{
+	   perror("kh4_get_position -> ");
+	   return 1;
+	}
+
+	pulsationCible = distance/KH4_PULSE_TO_MM;
+
+	if (kh4_SetMode(kh4RegPosition, dsPic) < 0){
+	    perror("ERREUR: Echec de la position du controle des roues sur les pulsation de l'odometre\n");
+	    return -1;
+	}
+	if ( kh4_set_position(roueGauche+(long)pulsationCible,
+	                      roueDroite+(long)pulsationCible,
+                          dsPic) < 0){
+	    perror("kh4_set_position -> ");
+	    return 1;
+	}
+
+	return 0;
 }
 
 /**
@@ -101,6 +147,7 @@ int pivoter(double degre)
         perror("kh4_set_position -> ");
 	    return -1;
     }
+
     return 0;
 }
 
@@ -111,6 +158,8 @@ int pivoter(double degre)
  * @return 1 si le capteur droit détecte un obstacle et que le capteur avant n'en détecte pas
  * @return 2 si le capteur droit et avant détectent un obstacle mais pas le capteur gauche
  * @return 3 si le capteur droit, avant et gauche détectent un obstacle
+ * @return 4 si le capteur droit détecte un obstacle mais s'en éloigne
+ * @return 5 si le capteur droit détecte un obstacle trop proche
  */
 int detect(int rayonIr)
 {
@@ -120,9 +169,9 @@ int detect(int rayonIr)
     int left_ir;
 
 
-    if(rayonIr > 1024 || rayonIr < 0)
+    if(rayonIr > MAX_DIST_OBS || rayonIr < ECART_IR)
     {
-        printf("detect -> valeur de détection non valide (comprise entre 0 et 1024)");
+        printf("detect -> valeur de détection non valide (comprise entre %d et %d)", ECART_IR, MAX_DIST_OBS);
         return -1;
     }
 
@@ -133,10 +182,17 @@ int detect(int rayonIr)
     front_ir = (Buffer[3*2] | Buffer[3*2+1]<<8);
     left_ir = (Buffer[1*2] | Buffer[1*2+1]<<8);
 
-    if(right_ir < rayonIr)
+    if(right_ir < MIN_DIST_OBS)
     {
     	return 0;
+    } else if (right_ir < 300)
+    {
+    	return 4;
+    } else if (right_ir >= MAX_DIST_OBS)
+    {
+    	return 5;
     }
+
 
     if(front_ir < rayonIr) // && right_ir >= rayonIr
     {
@@ -156,6 +212,7 @@ int parcours(void)
 {
 	int capteur_ir_comportement;
     int degre_a_pivoter;
+    int avance;
 
     if (raz() != 0)
     {
@@ -171,19 +228,35 @@ int parcours(void)
     kh4_set_speed(200, 200, dsPic);
 
     while(1) {
+    	avance = 0;
 
 	    while( (capteur_ir_comportement = detect(900) ) == 1); // Méthode bloquante, se débloque quand un obstacle est détecté
 
         if(capteur_ir_comportement == 0)
         {
             degre_a_pivoter = 90;
-        }else if(capteur_ir_comportement == 2)
+            if(avancer( 72 ) != 0) //rayon du robot (70mm) plus une marge de 2 mm
+            {
+                perror("avancer -> ");
+            	return -1;
+            }
+            usleep(3000000);
+            avance = 142; // diamètre du robot (140mm) plus une marge de 2mm
+        } else if (capteur_ir_comportement == 4)
+        {
+        	degre_a_pivoter = 5; // stub
+        	avance = 30; // stub
+        } else if (capteur_ir_comportement == 5)
+        {
+        	degre_a_pivoter = -5; // stub
+        	avance = 30; // stub
+        } else if(capteur_ir_comportement == 2)
         {
             degre_a_pivoter = -90;
-        }else if(capteur_ir_comportement == 3)
+        } else if(capteur_ir_comportement == 3)
         {
            degre_a_pivoter = 180;
-        }else
+        } else
         {
             perror("parcour -> ");
             return -1;
@@ -197,6 +270,13 @@ int parcours(void)
 	        return -1;
 	    }
 
+	    usleep(3000000);
+
+		if(avancer( avance ) != 0) //diamètre du robot (140,80mm) plus une marge de 2 mm
+		{
+			perror("avancer -> ");
+			return -1;
+		}
 	    usleep(3000000);
 
 	    if(kh4_SetMode( kh4RegSpeed,dsPic ) < 0)
